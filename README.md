@@ -1,7 +1,9 @@
 # SecuritySystem
 
+Projekat iz predmeta Bezbednost u sistemima elektronskog poslovanja.
+
 ### Tim 5 čine:
-| Uloga | Student |
+|  | Student |
 | ------ | ------ |
 | Student 1 | Maja Stamenić RA 65/2017| 
 | Student 2 | Gojko Novčić RA 208/2017| 
