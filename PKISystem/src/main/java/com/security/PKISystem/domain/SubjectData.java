@@ -1,9 +1,13 @@
 package com.security.PKISystem.domain;
 
+import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Date;
 
+import com.security.PKISystem.dto.AddCertificateDto;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.X500NameBuilder;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 public class SubjectData {
 
@@ -15,6 +19,15 @@ public class SubjectData {
 
 	public SubjectData() {
 
+	}
+
+	public SubjectData(KeyPair keyPair, AddCertificateDto certificateDto) {
+		//TODO: Naprativiti mapper
+		this.publicKey = keyPair.getPublic();
+
+
+		this.startDate = certificateDto.getValidFrom();
+		this.endDate = certificateDto.getValidTo();
 	}
 
 	public SubjectData(PublicKey publicKey, X500Name x500name, String serialNumber, Date startDate, Date endDate) {
