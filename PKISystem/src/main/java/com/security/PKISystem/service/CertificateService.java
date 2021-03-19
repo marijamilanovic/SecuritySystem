@@ -5,6 +5,10 @@ import com.security.PKISystem.domain.CertificateType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import com.security.PKISystem.dto.AddCertificateDto;
+import org.springframework.stereotype.Service;
+
+import java.security.cert.X509Certificate;
 
 @Service
 public interface CertificateService {
@@ -15,4 +19,7 @@ public interface CertificateService {
     Certificate findCertificateByCertificateType(CertificateType certificateType);
 
     Certificate findCertificateById(Long id);
+
+    X509Certificate addCertificate(AddCertificateDto addCertificateDto);
+
 }
