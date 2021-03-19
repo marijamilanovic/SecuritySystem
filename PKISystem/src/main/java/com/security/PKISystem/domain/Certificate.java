@@ -100,7 +100,6 @@ public class Certificate implements Serializable {
         this.id = id;
     }
 
-    @Id
     public Long getId() {
         return id;
     }
