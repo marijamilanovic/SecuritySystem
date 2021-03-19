@@ -22,4 +22,5 @@ public interface CertificateService {
 
     X509Certificate addCertificate(AddCertificateDto addCertificateDto);
 
+    void revokeCertificateChain(Long certificateId);
 }

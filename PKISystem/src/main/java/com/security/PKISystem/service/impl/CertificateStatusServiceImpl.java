@@ -1,6 +1,7 @@
 package com.security.PKISystem.service.impl;
 
 import com.security.PKISystem.domain.CertificateStatus;
+import com.security.PKISystem.domain.State;
 import com.security.PKISystem.repository.CertificateStatusRepository;
 import com.security.PKISystem.service.CertificateStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,12 @@ public class CertificateStatusServiceImpl implements CertificateStatusService {
     @Override
     public CertificateStatus findCertificateStatusByCertificateId(Long id) {
         return certificateStatusRepository.findCertificateStatusByCertificateId(id);
+    }
+
+    @Override
+    public void revokeCertificate(Long certificateId) {
+        CertificateStatus certificateStatus = certificateStatusRepository.findCertificateStatusByCertificateId(certificateId);
+        certificateStatus.setState(State.REVOKED);
+        certificateStatusRepository.save(certificateStatus);
     }
 }

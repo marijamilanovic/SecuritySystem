@@ -21,8 +21,8 @@ public class AddCertificateDto {
     public AddCertificateDto(Certificate certificate){
         this.serialNumber = certificate.getSerialNumber();
         this.publicKey = certificate.getPublicKey();
-        this.issuedByName = certificate.getIssuedByName();
-        this.issuedById = certificate.getIssuedById();
+        this.issuedByName = certificate.getIssuerName();
+        this.issuedById = certificate.getIssuerId();
         this.validFrom = certificate.getValidFrom();
         this.validTo = certificate.getValidTo();
         this.certificateType = certificate.getCertificateType();

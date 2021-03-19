@@ -41,7 +41,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
 
-        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuedByName(addCertificateDto.getIssuedByName());
+        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(addCertificateDto.getIssuedByName());
         Certificate issuerCertificate = new Certificate();
 
         for(Certificate c: issuerCertificates){
@@ -79,6 +79,23 @@ public class CertificateServiceImpl implements CertificateService {
         keyStoreWriter.saveKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
 
         return certificate;
+    }
+
+    @Override
+    public void revokeCertificateChain(Long certificateId) {
+        revokeCertificate(certificateId);
+        if(certificateRepository.findCertificateById(certificateId).getCertificateType() == CertificateType.END_ENTITY)
+            return;
+        for(Certificate c : certificateRepository.findCertificateByIssuerId(certificateId)){
+            revokeCertificateChain(c.getId());
+        }
+    }
+
+    private void revokeCertificate(Long certificateId){
+        Certificate certificate = certificateRepository.findCertificateById(certificateId);
+        certificate.setState(State.REVOKED);
+        certificateStatusService.revokeCertificate(certificateId);
+        certificateRepository.save(certificate);
     }
 
     private KeyPair generateKeyPair() {

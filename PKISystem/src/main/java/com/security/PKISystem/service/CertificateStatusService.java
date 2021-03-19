@@ -8,4 +8,6 @@ public interface CertificateStatusService {
     CertificateStatus saveCertificateStatus(CertificateStatus certificateStatus);
 
     CertificateStatus findCertificateStatusByCertificateId(Long id);
+
+    void revokeCertificate(Long certificateId);
 }

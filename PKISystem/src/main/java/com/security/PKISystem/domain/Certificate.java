@@ -17,9 +17,9 @@ public class Certificate implements Serializable {
     @Column
     private String publicKey;
     @Column
-    private String issuedByName;
+    private String issuerName;
     @Column
-    private Long issuedById;
+    private Long issuerId;
     @Column
     private Date validFrom;
     @Column
@@ -31,22 +31,22 @@ public class Certificate implements Serializable {
 
     public Certificate(){}
 
-    public Certificate(Long id, Long serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+    public Certificate(Long id, Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
-        this.issuedByName = issuedByName;
-        this.issuedById = issuedById;
+        this.issuerName = issuerName;
+        this.issuerId = issuerId;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
     }
 
-    public Certificate(String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo) {
+    public Certificate(String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo) {
         this.publicKey = publicKey;
-        this.issuedByName = issuedByName;
-        this.issuedById = issuedById;
+        this.issuerName = issuerName;
+        this.issuerId = issuerId;
         this.validFrom = validFrom;
         this.validTo = validTo;
     }
@@ -67,20 +67,20 @@ public class Certificate implements Serializable {
         this.publicKey = publicKey;
     }
 
-    public String getIssuedByName() {
-        return issuedByName;
+    public String getIssuerName() {
+        return issuerName;
     }
 
-    public void setIssuedByName(String issuedByName) {
-        this.issuedByName = issuedByName;
+    public void setIssuerName(String issuerName) {
+        this.issuerName = issuerName;
     }
 
-    public Long getIssuedById() {
-        return issuedById;
+    public Long getIssuerId() {
+        return issuerId;
     }
 
-    public void setIssuedById(Long issuedById) {
-        this.issuedById = issuedById;
+    public void setIssuerId(Long issuerId) {
+        this.issuerId = issuerId;
     }
 
     public Date getValidFrom() {
