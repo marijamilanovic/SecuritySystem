@@ -37,22 +37,33 @@ public class CertificateServiceImpl implements CertificateService {
         //TODO: Proveriti userove sertifikate
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
+        keyStoreWriter.loadKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
+
         KeyPair keyPairSubject = generateKeyPair();
+
+        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuedByName(addCertificateDto.getIssuedByName());
+        Certificate issuerCertificate = new Certificate();
+
+        for(Certificate c: issuerCertificates){
+            CertificateStatus status = this.certificateStatusService.findCertificateStatusByCertificateId(c.getId());
+            if(status.getState().equals(State.VALID)){
+                issuerCertificate = c;
+                break;
+            }
+        }
 
         Certificate certForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
                 addCertificateDto.getIssuedByName(), addCertificateDto.getIssuedById(),
                 addCertificateDto.getValidFrom(), addCertificateDto.getValidTo());
 
         certForDatabase = this.certificateRepository.save(certForDatabase);
-
-        //TODO: Maja
         addCertificateDto.setSerialNumber(certForDatabase.getId());
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
-        //TODO: Napraviti IssuerData
-        IssuerData issuerData = new IssuerData();
-        SubjectData subjectData = new SubjectData(keyPairSubject, addCertificateDto);
 
+        IssuerData issuerData = keyStoreReader.readIssuerFromStore(addCertificateDto.getKeystoreName(), issuerCertificate.getSerialNumber().toString(), addCertificateDto.getKeystorePassword().toCharArray(),
+                addCertificateDto.getKeystorePassword().toCharArray());
+        SubjectData subjectData = new SubjectData(keyPairSubject, addCertificateDto);
 
         CertificateStatus certificateStatus = new CertificateStatus();
         certificateStatus.setCertificateId(certForDatabase.getId());
@@ -63,12 +74,9 @@ public class CertificateServiceImpl implements CertificateService {
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
 
-        //TODO: Password
+        keyStoreWriter.write(addCertificateDto.getSerialNumber().toString(), keyPairSubject.getPrivate(), addCertificateDto.getKeystorePassword().toCharArray() , certificate);
 
-//        keyStoreWriter.write(addCertificateDto.getSerialNumber(), keyPairSubject.getPrivate(), Password , certificate);
-
-//        keyStoreWriter.saveKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
-
+        keyStoreWriter.saveKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
 
         return certificate;
     }

@@ -26,10 +26,12 @@ public class Certificate implements Serializable {
     private Date validTo;
     @Column
     private CertificateType certificateType;
+    @Column
+    private State state;
 
     public Certificate(){}
 
-    public Certificate(Long id, Long serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType) {
+    public Certificate(Long id, Long serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
@@ -38,6 +40,7 @@ public class Certificate implements Serializable {
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.certificateType = certificateType;
+        this.state = state;
     }
 
     public Certificate(String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo) {
@@ -110,5 +113,13 @@ public class Certificate implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

@@ -13,6 +13,8 @@ public class AddCertificateDto {
     private Date validFrom;
     private Date validTo;
     private CertificateType certificateType;
+    private String keystoreName;
+    private String keystorePassword;
 
     public AddCertificateDto(){}
 
@@ -24,6 +26,18 @@ public class AddCertificateDto {
         this.validFrom = certificate.getValidFrom();
         this.validTo = certificate.getValidTo();
         this.certificateType = certificate.getCertificateType();
+    }
+
+    public AddCertificateDto(Long serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, String keystoreName, String keystorePassword) {
+        this.serialNumber = serialNumber;
+        this.publicKey = publicKey;
+        this.issuedByName = issuedByName;
+        this.issuedById = issuedById;
+        this.validFrom = validFrom;
+        this.validTo = validTo;
+        this.certificateType = certificateType;
+        this.keystoreName = keystoreName;
+        this.keystorePassword = keystorePassword;
     }
 
     public Long getSerialNumber() {
@@ -80,5 +94,21 @@ public class AddCertificateDto {
 
     public void setCertificateType(CertificateType certificateType) {
         this.certificateType = certificateType;
+    }
+
+    public String getKeystoreName() {
+        return keystoreName;
+    }
+
+    public void setKeystoreName(String keystoreName) {
+        this.keystoreName = keystoreName;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
     }
 }

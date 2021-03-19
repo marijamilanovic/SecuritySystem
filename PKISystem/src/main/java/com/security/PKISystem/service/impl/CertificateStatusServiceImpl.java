@@ -15,4 +15,9 @@ public class CertificateStatusServiceImpl implements CertificateStatusService {
     public CertificateStatus saveCertificateStatus(CertificateStatus certificateStatus) {
         return certificateStatusRepository.save(certificateStatus);
     }
+
+    @Override
+    public CertificateStatus findCertificateStatusByCertificateId(Long id) {
+        return certificateStatusRepository.findCertificateStatusByCertificateId(id);
+    }
 }

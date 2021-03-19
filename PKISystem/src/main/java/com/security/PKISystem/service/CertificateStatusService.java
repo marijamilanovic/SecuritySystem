@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CertificateStatusService {
     CertificateStatus saveCertificateStatus(CertificateStatus certificateStatus);
+
+    CertificateStatus findCertificateStatusByCertificateId(Long id);
 }

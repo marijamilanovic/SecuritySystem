@@ -10,13 +10,10 @@ public class CertificateStatus implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column
     private Long certificateId;
-
     @Column
     private State state;
-
 
     public CertificateStatus() {}
 

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CertificateStatusRepository extends JpaRepository<CertificateStatus, Long> {
+    CertificateStatus findCertificateStatusByCertificateId(Long id);
 }
