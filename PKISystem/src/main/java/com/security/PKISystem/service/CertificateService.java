@@ -14,7 +14,7 @@ import java.security.cert.X509Certificate;
 public interface CertificateService {
     Certificate save(Certificate certificate);
 
-    List<Certificate> findAll();
+    List<AddCertificateDto> findAll();
 
     Certificate findCertificateByCertificateType(CertificateType certificateType);
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.*;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import java.util.List;
@@ -87,7 +88,14 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<Certificate> findAll() { return this.certificateRepository.findAll(); }
+    public List<AddCertificateDto> findAll() {
+        List<Certificate> certificates = certificateRepository.findAll();
+        List<AddCertificateDto> certificateDtos = new ArrayList<>();
+        for(Certificate c:certificates){
+            certificateDtos.add(new AddCertificateDto(c));
+        }
+        return certificateDtos;
+    }
 
     @Override
     public Certificate findCertificateByCertificateType(CertificateType certificateType) { return  this.certificateRepository.findCertificateByCertificateType(certificateType); }
