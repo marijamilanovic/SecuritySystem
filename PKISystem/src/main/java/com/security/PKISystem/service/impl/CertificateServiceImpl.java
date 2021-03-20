@@ -91,6 +91,21 @@ public class CertificateServiceImpl implements CertificateService {
         }
     }
 
+    @Override
+    public boolean isCertificateValid(Long serialNumber, Long issuerId) {
+        Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+        // todo
+        // provera datuma
+        // provera certificate chain-a
+        return false;
+    }
+
+    @Override
+    public Certificate findCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
+        return certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+    }
+
+
     private void revokeCertificate(Long certificateId){
         Certificate certificate = certificateRepository.findCertificateById(certificateId);
         certificate.setState(State.REVOKED);

@@ -1,44 +1,23 @@
-package com.security.PKISystem.domain;
+package com.security.PKISystem.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.security.PKISystem.domain.CertificateType;
+import com.security.PKISystem.domain.State;
 
-import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
-@Table
-@Entity
-public class Certificate implements Serializable {
-    private static final long serialVersionUID = -6771834675925509282L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column
+public class CertificateDto {
     private Long serialNumber;
-    @Column
     private String publicKey;
-    @Column
     private String issuerName;
-    @Column
     private Long issuerId;
-    @Column
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
     private Date validFrom;
-    @Column
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
     private Date validTo;
-    @Column
     private CertificateType certificateType;
-    @Column
     private State state;
 
-    public Certificate(){}
+    public CertificateDto(){}
 
-    public Certificate(Long id, Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
-        this.id = id;
+    public CertificateDto(Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
@@ -47,14 +26,6 @@ public class Certificate implements Serializable {
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
-    }
-
-    public Certificate(String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo) {
-        this.publicKey = publicKey;
-        this.issuerName = issuerName;
-        this.issuerId = issuerId;
-        this.validFrom = validFrom;
-        this.validTo = validTo;
     }
 
     public Long getSerialNumber() {
@@ -111,14 +82,6 @@ public class Certificate implements Serializable {
 
     public void setCertificateType(CertificateType certificateType) {
         this.certificateType = certificateType;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public State getState() {

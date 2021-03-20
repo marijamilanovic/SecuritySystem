@@ -922,40 +922,65 @@ SELECT|sys.sys_config
 </ObjectGrants>
     </user>
     <table id="288" parent="9" name="certificate"/>
-    <column id="289" parent="288" name="id">
+    <table id="289" parent="9" name="certificate_status"/>
+    <column id="290" parent="288" name="id">
       <Position>1</Position>
       <DataType>bigint|0s</DataType>
       <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="290" parent="288" name="certificate_type">
+    <column id="291" parent="288" name="certificate_type">
       <Position>2</Position>
       <DataType>int|0s</DataType>
     </column>
-    <column id="291" parent="288" name="issued_by_id">
+    <column id="292" parent="288" name="issuer_id">
       <Position>3</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <column id="292" parent="288" name="issued_by_name">
+    <column id="293" parent="288" name="issuer_name">
       <Position>4</Position>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <column id="293" parent="288" name="public_key">
+    <column id="294" parent="288" name="public_key">
       <Position>5</Position>
       <DataType>varchar(255)|0s</DataType>
     </column>
-    <column id="294" parent="288" name="serial_number">
+    <column id="295" parent="288" name="serial_number">
       <Position>6</Position>
       <DataType>bigint|0s</DataType>
     </column>
-    <column id="295" parent="288" name="valid_from">
+    <column id="296" parent="288" name="state">
       <Position>7</Position>
-      <DataType>datetime(6)|0s</DataType>
+      <DataType>int|0s</DataType>
     </column>
-    <column id="296" parent="288" name="valid_to">
+    <column id="297" parent="288" name="valid_from">
       <Position>8</Position>
-      <DataType>datetime(6)|0s</DataType>
+      <DataType>date|0s</DataType>
     </column>
-    <key id="297" parent="288" name="PRIMARY">
+    <column id="298" parent="288" name="valid_to">
+      <Position>9</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <key id="299" parent="288" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <column id="300" parent="289" name="id">
+      <Position>1</Position>
+      <DataType>bigint|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="301" parent="289" name="certificate_id">
+      <Position>2</Position>
+      <DataType>bigint|0s</DataType>
+    </column>
+    <column id="302" parent="289" name="state">
+      <Position>3</Position>
+      <DataType>int|0s</DataType>
+    </column>
+    <key id="303" parent="289" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>

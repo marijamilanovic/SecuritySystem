@@ -6,15 +6,13 @@ import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.cert.X509Certificate;
 import java.util.List;
 
 @RestController
+@RequestMapping("/certificate")
 public class CertificateController {
     @Autowired
     private CertificateService certificateService;
@@ -28,5 +26,10 @@ public class CertificateController {
     @GetMapping
     public ResponseEntity<List<AddCertificateDto>> getCertificates(){
         return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("{serialNumber}/{issuerId}")
+    public Certificate findCertificateBySerialNumberAndIssuerId(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
+        return certificateService.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 }
