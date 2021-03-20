@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/certificate")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CertificateController {
     @Autowired
     private CertificateService certificateService;
@@ -28,7 +29,7 @@ public class CertificateController {
         return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("{serialNumber}/{issuerId}")
+    @GetMapping("/{serialNumber}/{issuerId}")
     public Certificate findCertificateBySerialNumberAndIssuerId(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
         return certificateService.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
