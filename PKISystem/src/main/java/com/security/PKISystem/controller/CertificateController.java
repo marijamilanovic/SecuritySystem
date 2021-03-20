@@ -30,7 +30,12 @@ public class CertificateController {
     }
 
     @GetMapping("/{serialNumber}/{issuerId}")
-    public Certificate findCertificateBySerialNumberAndIssuerId(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
-        return certificateService.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+    public Certificate getCertificateBySerialNumberAndIssuerId(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
+        return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+    }
+
+    @GetMapping("/valid/{serialNumber}/{issuerId}")
+    public boolean isCertificateValid(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
+        return certificateService.isCertificateValid(serialNumber, issuerId);
     }
 }

@@ -26,5 +26,5 @@ public interface CertificateService {
 
     boolean isCertificateValid(Long serialNumber, Long issuerId);
 
-    Certificate findCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
+    Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
 }

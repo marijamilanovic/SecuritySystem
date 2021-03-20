@@ -14,9 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.*;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -91,17 +96,25 @@ public class CertificateServiceImpl implements CertificateService {
         }
     }
 
+    // VALIDATION
     @Override
     public boolean isCertificateValid(Long serialNumber, Long issuerId) {
-        Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-        // todo
-        // provera datuma
-        // provera certificate chain-a
+        Certificate certificate = getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+        if(checkDate(certificate.getValidFrom(), certificate.getValidTo()))
+            return true;
+        // todo: certificate chain-a
         return false;
     }
 
+    public boolean checkDate(Date validFrom, Date validTo){
+        long current = new Date().getTime();
+        return current >= validFrom.getTime() && current <= validTo.getTime();
+    }
+
+    ///
+
     @Override
-    public Certificate findCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
+    public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
         return certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 
