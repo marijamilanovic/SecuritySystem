@@ -2,6 +2,8 @@
 
 Projekat iz predmeta Bezbednost u sistemima elektronskog poslovanja.
 
+Trello: https://trello.com/b/OqGWAJ3t/pki-system
+
 ### Tim 5 čine:
 |  | Student |
 | ------ | ------ |
