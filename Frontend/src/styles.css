@@ -1,1 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    background: url(../images/information-security.jpg) no-repeat center center fixed Highlight;
+    /*background-color: gray;*/
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+input[type=email], input[type=password], input[type=text], input[type = tel], input[type=number],select{
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+
+  button {
+    background-color: rgb(27, 186, 214);
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .page{
+    width: 360px;
+      padding: 0% 0 0;
+      margin: auto;
+  }
+  .ngform {
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF;
+    max-width: 560px;
+    margin: 0 auto 100px;
+    margin-top: 15px;
+    padding: 45px;
+    text-align: center;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  }
+
+  .transparent{
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+
+  table{
+    background-color: white;
+  }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
