@@ -1,10 +1,10 @@
 package com.security.PKISystem.service.impl;
 
 import com.security.PKISystem.certificates.CertificateGenerator;
-import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.Certificate;
-import com.security.PKISystem.domain.CertificateType;
+import com.security.PKISystem.domain.*;
 import com.security.PKISystem.dto.AddCertificateDto;
+import com.security.PKISystem.exception.NotFoundException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -14,13 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
-
 import java.util.Date;
 import java.util.List;
 
@@ -100,10 +95,14 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public boolean isCertificateValid(Long serialNumber, Long issuerId) {
         Certificate certificate = getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-        if(checkDate(certificate.getValidFrom(), certificate.getValidTo()))
-            return true;
-        // todo: certificate chain-a
-        return false;
+        if (certificate != null){
+            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
+                    checkCertificateNotRevocation(certificate))
+                return true;
+            // todo: certificate chain, provera javnog kljuca
+            return false;
+        }
+        throw new NotFoundException("Certificate not found.");
     }
 
     public boolean checkDate(Date validFrom, Date validTo){
@@ -111,7 +110,16 @@ public class CertificateServiceImpl implements CertificateService {
         return current >= validFrom.getTime() && current <= validTo.getTime();
     }
 
-    ///
+    public boolean checkCertificateChain(){
+        return true;
+    }
+
+    // todo: ocsp
+    public boolean checkCertificateNotRevocation(Certificate certificate){
+        return certificate.getState() == State.VALID;
+    }
+
+    ///////
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
