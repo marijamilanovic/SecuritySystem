@@ -97,7 +97,7 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate certificate = getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
         if (certificate != null){
             if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
-                    checkCertificateNotRevocation(certificate))
+                    isNotRevoked(certificate))
                 return true;
             // todo: certificate chain, provera javnog kljuca
             return false;
@@ -115,7 +115,7 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     // todo: ocsp
-    public boolean checkCertificateNotRevocation(Certificate certificate){
+    public boolean isNotRevoked(Certificate certificate){
         return certificate.getState() == State.VALID;
     }
 

@@ -34,6 +34,7 @@ public class CertificateController {
         return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 
+    // todo: ocsp
     @GetMapping("/valid/{serialNumber}/{issuerId}")
     public boolean isCertificateValid(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
         return certificateService.isCertificateValid(serialNumber, issuerId);
