@@ -96,9 +96,10 @@ public class CertificateServiceImpl implements CertificateService {
     public boolean isCertificateValid(Long serialNumber, Long issuerId) {
         Certificate certificate = getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
         if (certificate != null){
-            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()))
+            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
+                    checkCertificateNotRevocation(certificate))
                 return true;
-            // todo: certificate chain-a, provera javnog kljuca
+            // todo: certificate chain, provera javnog kljuca
             return false;
         }
         throw new NotFoundException("Certificate not found.");
@@ -113,7 +114,12 @@ public class CertificateServiceImpl implements CertificateService {
         return true;
     }
 
-    ///
+    // todo: ocsp
+    public boolean checkCertificateNotRevocation(Certificate certificate){
+        return certificate.getState() == State.VALID;
+    }
+
+    ///////
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
