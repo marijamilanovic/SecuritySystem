@@ -15,11 +15,13 @@ public class Certificate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private Long serialNumber;
-    @Column
+    private String serialNumber;
+    @Column(length=1000)
     private String publicKey;
     @Column
     private String issuerName;
+    @Column
+    private String issuedTo;
     @Column
     private Long issuerId;
     @Column
@@ -37,12 +39,13 @@ public class Certificate implements Serializable {
 
     public Certificate(){}
 
-    public Certificate(Long id, Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+    public Certificate(Long id, String serialNumber, String publicKey, String issuerName,String issuedTo, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
         this.issuerId = issuerId;
+        this.issuedTo = issuedTo;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.certificateType = certificateType;
@@ -57,11 +60,11 @@ public class Certificate implements Serializable {
         this.validTo = validTo;
     }
 
-    public Long getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(Long serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 
@@ -127,5 +130,13 @@ public class Certificate implements Serializable {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public String getIssuedTo() {
+        return issuedTo;
+    }
+
+    public void setIssuedTo(String issuedTo) {
+        this.issuedTo = issuedTo;
     }
 }
