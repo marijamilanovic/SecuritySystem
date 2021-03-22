@@ -22,6 +22,8 @@ public interface CertificateService {
 
     X509Certificate addCertificate(AddCertificateDto addCertificateDto);
 
+    X509Certificate addRootCertificate(AddCertificateDto addCertificateDto);
+
     void revokeCertificateChain(Long certificateId);
 
     boolean isCertificateValid(Long serialNumber, Long issuerId);

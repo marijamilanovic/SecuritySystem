@@ -82,6 +82,39 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
+    public X509Certificate addRootCertificate(AddCertificateDto addCertificateDto) {
+
+        KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
+        keyStoreWriter.loadKeyStore(addCertificateDto.getKeystoreName() + ".jks", addCertificateDto.getKeystorePassword().toCharArray());
+
+        KeyPair keyPairSubject = generateKeyPair();
+
+        Certificate certificateForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
+                addCertificateDto.getIssuedByName(), addCertificateDto.getIssuedById(),
+                addCertificateDto.getValidFrom(), addCertificateDto.getValidTo());
+
+        certificateForDatabase = this.certificateRepository.save(certificateForDatabase);
+        Long idIssuer = certificateForDatabase.getIssuerId();
+        certificateForDatabase.setIssuerId(idIssuer);
+        certificateForDatabase = this.certificateRepository.save(certificateForDatabase);
+        
+        addCertificateDto.setSerialNumber(certificateForDatabase.getId());
+
+        CertificateStatus certificateStatus = new CertificateStatus();
+        certificateStatus.setCertificateId(certificateForDatabase.getId());
+        certificateStatus.setState(State.VALID);
+        this.certificateStatusService.saveCertificateStatus(certificateStatus);
+
+        SubjectData subjectData = new SubjectData();
+
+
+
+        return null;
+    }
+
+
+
+    @Override
     public void revokeCertificateChain(Long certificateId) {
         revokeCertificate(certificateId);
         if(certificateRepository.findCertificateById(certificateId).getCertificateType() == CertificateType.END_ENTITY)

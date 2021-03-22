@@ -22,9 +22,8 @@ public class SubjectData {
 	}
 
 	public SubjectData(KeyPair keyPair, AddCertificateDto certificateDto) {
-		//TODO: Naprativiti mapper
+		//TODO: Napraviti mapper
 		this.publicKey = keyPair.getPublic();
-
 
 		this.startDate = certificateDto.getValidFrom();
 		this.endDate = certificateDto.getValidTo();
