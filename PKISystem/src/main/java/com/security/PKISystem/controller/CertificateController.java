@@ -1,8 +1,7 @@
 package com.security.PKISystem.controller;
 
 import com.security.PKISystem.domain.Certificate;
-import com.security.PKISystem.domain.State;
-import com.security.PKISystem.dto.AddCertificateDto;
+import com.security.PKISystem.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,13 +19,13 @@ public class CertificateController {
     private CertificateService certificateService;
 
     @PostMapping
-    public ResponseEntity generateCertificate(@RequestBody AddCertificateDto addCertificateDto)  {
-        X509Certificate cert = this.certificateService.addCertificate(addCertificateDto);
+    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+        X509Certificate cert = this.certificateService.addCertificate(requestCertificateDto);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<AddCertificateDto>> getCertificates(){
+    public ResponseEntity<List<RequestCertificateDto>> getCertificates(){
         return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
     }
 
@@ -47,7 +46,12 @@ public class CertificateController {
     }
 
     @GetMapping("/types")
-    public List<String> getCertificateTypes(){
+    public List<String> getCertificateTypes() {
         return certificateService.getCertificateTypes();
+    }
+
+    @PostMapping("/root")
+    public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
     }
 }

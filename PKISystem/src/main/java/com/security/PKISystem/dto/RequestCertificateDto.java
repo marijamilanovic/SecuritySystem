@@ -5,20 +5,27 @@ import com.security.PKISystem.domain.CertificateType;
 
 import java.util.Date;
 
-public class AddCertificateDto {
-    private Long serialNumber;
+public class RequestCertificateDto {
+    private String serialNumber;
     private String publicKey;
     private String issuedByName;
     private Long issuedById;
+    private String issuedToCommonName;
+    private String surname;
+    private String givenName;
+    private String organisation;
+    private String organisationalUnit;
+    private String country;
+    private String email;
     private Date validFrom;
     private Date validTo;
     private CertificateType certificateType;
     private String keystoreName;
     private String keystorePassword;
 
-    public AddCertificateDto(){}
+    public RequestCertificateDto(){}
 
-    public AddCertificateDto(Certificate certificate){
+    public RequestCertificateDto(Certificate certificate){
         this.serialNumber = certificate.getSerialNumber();
         this.publicKey = certificate.getPublicKey();
         this.issuedByName = certificate.getIssuerName();
@@ -28,7 +35,7 @@ public class AddCertificateDto {
         this.certificateType = certificate.getCertificateType();
     }
 
-    public AddCertificateDto(Long serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, String keystoreName, String keystorePassword) {
+    public RequestCertificateDto(String serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, String keystoreName, String keystorePassword) {
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuedByName = issuedByName;
@@ -40,11 +47,11 @@ public class AddCertificateDto {
         this.keystorePassword = keystorePassword;
     }
 
-    public Long getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(Long serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 
@@ -110,5 +117,61 @@ public class AddCertificateDto {
 
     public void setKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public String getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
+    }
+
+    public String getOrganisationalUnit() {
+        return organisationalUnit;
+    }
+
+    public void setOrganisationalUnit(String organisationalUnit) {
+        this.organisationalUnit = organisationalUnit;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getIssuedToCommonName() {
+        return issuedToCommonName;
+    }
+
+    public void setIssuedToCommonName(String issuedToCommonName) {
+        this.issuedToCommonName = issuedToCommonName;
     }
 }

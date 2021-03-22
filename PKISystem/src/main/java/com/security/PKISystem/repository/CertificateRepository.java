@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 
+    Certificate save(Certificate certificate);
+
     List<Certificate> findAll();
 
     Certificate findCertificateByCertificateType(CertificateType certificateType);

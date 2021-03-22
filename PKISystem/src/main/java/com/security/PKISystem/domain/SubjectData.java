@@ -4,7 +4,7 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Date;
 
-import com.security.PKISystem.dto.AddCertificateDto;
+import com.security.PKISystem.dto.RequestCertificateDto;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -21,9 +21,20 @@ public class SubjectData {
 
 	}
 
-	public SubjectData(KeyPair keyPair, AddCertificateDto certificateDto) {
-		//TODO: Naprativiti mapper
+	public SubjectData(KeyPair keyPair, RequestCertificateDto certificateDto) {
+		//TODO: Napraviti mapper
 		this.publicKey = keyPair.getPublic();
+		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+		builder.addRDN(BCStyle.CN, certificateDto.getIssuedToCommonName());
+		builder.addRDN(BCStyle.SURNAME, certificateDto.getSurname());
+		builder.addRDN(BCStyle.GIVENNAME, certificateDto.getGivenName());
+		builder.addRDN(BCStyle.O, certificateDto.getOrganisation());
+		builder.addRDN(BCStyle.OU, certificateDto.getOrganisationalUnit());
+		builder.addRDN(BCStyle.C, certificateDto.getCountry());
+		builder.addRDN(BCStyle.E, certificateDto.getEmail());
+		builder.addRDN(BCStyle.SERIALNUMBER, certificateDto.getSerialNumber());
+		this.x500name = builder.build();
+		this.serialNumber = "1";
 
 
 		this.startDate = certificateDto.getValidFrom();

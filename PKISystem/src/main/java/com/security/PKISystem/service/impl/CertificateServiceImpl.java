@@ -3,7 +3,7 @@ package com.security.PKISystem.service.impl;
 import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
-import com.security.PKISystem.dto.AddCertificateDto;
+import com.security.PKISystem.dto.RequestCertificateDto;
 import com.security.PKISystem.exception.NotFoundException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
@@ -32,16 +32,16 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public X509Certificate addCertificate(AddCertificateDto addCertificateDto) {
+    public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
 
         //TODO: Proveriti userove sertifikate
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
-        keyStoreWriter.loadKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
+        keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
 
         KeyPair keyPairSubject = generateKeyPair();
 
-        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(addCertificateDto.getIssuedByName());
+        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(requestCertificateDto.getIssuedByName());
         Certificate issuerCertificate = new Certificate();
 
         for(Certificate c: issuerCertificates){
@@ -53,17 +53,17 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         Certificate certForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
-                addCertificateDto.getIssuedByName(), addCertificateDto.getIssuedById(),
-                addCertificateDto.getValidFrom(), addCertificateDto.getValidTo());
+                requestCertificateDto.getIssuedByName(), requestCertificateDto.getIssuedById(),
+                requestCertificateDto.getValidFrom(), requestCertificateDto.getValidTo());
 
         certForDatabase = this.certificateRepository.save(certForDatabase);
-        addCertificateDto.setSerialNumber(certForDatabase.getId());
+        requestCertificateDto.setSerialNumber(certForDatabase.getId().toString());
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
-        IssuerData issuerData = keyStoreReader.readIssuerFromStore(addCertificateDto.getKeystoreName(), issuerCertificate.getSerialNumber().toString(), addCertificateDto.getKeystorePassword().toCharArray(),
-                addCertificateDto.getKeystorePassword().toCharArray());
-        SubjectData subjectData = new SubjectData(keyPairSubject, addCertificateDto);
+        IssuerData issuerData = keyStoreReader.readIssuerFromStore(requestCertificateDto.getKeystoreName(), issuerCertificate.getSerialNumber().toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
+                requestCertificateDto.getKeystorePassword().toCharArray());
+        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto);
 
         CertificateStatus certificateStatus = new CertificateStatus();
         certificateStatus.setCertificateId(certForDatabase.getId());
@@ -74,12 +74,51 @@ public class CertificateServiceImpl implements CertificateService {
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
 
-        keyStoreWriter.write(addCertificateDto.getSerialNumber().toString(), keyPairSubject.getPrivate(), addCertificateDto.getKeystorePassword().toCharArray() , certificate);
+        keyStoreWriter.write(requestCertificateDto.getSerialNumber().toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray() , certificate);
 
-        keyStoreWriter.saveKeyStore(addCertificateDto.getKeystoreName()+".jks", addCertificateDto.getKeystorePassword().toCharArray());
+        keyStoreWriter.saveKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
 
         return certificate;
     }
+
+    @Override
+    public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
+
+        KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
+        keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName() + ".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+
+        KeyPair keyPairSubject = generateKeyPair();
+
+        Certificate certificateForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
+                requestCertificateDto.getIssuedByName(), requestCertificateDto.getIssuedById(),
+                requestCertificateDto.getValidFrom(), requestCertificateDto.getValidTo());
+
+        this.certificateRepository.save(certificateForDatabase);
+        Long idIssuer = certificateForDatabase.getIssuerId();
+        certificateForDatabase.setIssuerId(idIssuer);
+        this.certificateRepository.save(certificateForDatabase);
+        
+        requestCertificateDto.setSerialNumber(certificateForDatabase.getId().toString());
+
+        CertificateStatus certificateStatus = new CertificateStatus();
+        certificateStatus.setCertificateId(certificateForDatabase.getId());
+        certificateStatus.setState(State.VALID);
+        this.certificateStatusService.saveCertificateStatus(certificateStatus);
+
+        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto);
+        IssuerData issuerData = new IssuerData(keyPairSubject.getPrivate(), requestCertificateDto);
+
+        CertificateGenerator certificateGenerator = new CertificateGenerator();
+        X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
+
+        keyStoreWriter.write(requestCertificateDto.getSerialNumber(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
+
+        keyStoreWriter.saveKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+
+        return certificate;
+    }
+
+
 
     @Override
     public void revokeCertificateChain(Long certificateId) {
@@ -165,11 +204,11 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<AddCertificateDto> findAll() {
+    public List<RequestCertificateDto> findAll() {
         List<Certificate> certificates = certificateRepository.findAll();
-        List<AddCertificateDto> certificateDtos = new ArrayList<>();
+        List<RequestCertificateDto> certificateDtos = new ArrayList<>();
         for(Certificate c:certificates){
-            certificateDtos.add(new AddCertificateDto(c));
+            certificateDtos.add(new RequestCertificateDto(c));
         }
         return certificateDtos;
     }

@@ -6,8 +6,7 @@ import com.security.PKISystem.domain.State;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import com.security.PKISystem.dto.AddCertificateDto;
-import org.springframework.stereotype.Service;
+import com.security.PKISystem.dto.RequestCertificateDto;
 
 import java.security.cert.X509Certificate;
 
@@ -15,13 +14,15 @@ import java.security.cert.X509Certificate;
 public interface CertificateService {
     Certificate save(Certificate certificate);
 
-    List<AddCertificateDto> findAll();
+    List<RequestCertificateDto> findAll();
 
     Certificate findCertificateByCertificateType(CertificateType certificateType);
 
     Certificate findCertificateById(Long id);
 
-    X509Certificate addCertificate(AddCertificateDto addCertificateDto);
+    X509Certificate addCertificate(RequestCertificateDto requestCertificateDto);
+
+    X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto);
 
     void revokeCertificateChain(Long certificateId);
 
