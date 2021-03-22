@@ -1,6 +1,7 @@
 package com.security.PKISystem.controller;
 
 import com.security.PKISystem.domain.Certificate;
+import com.security.PKISystem.domain.State;
 import com.security.PKISystem.dto.AddCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,5 +39,15 @@ public class CertificateController {
     @GetMapping("/valid/{serialNumber}/{issuerId}")
     public boolean isCertificateValid(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
         return certificateService.isCertificateValid(serialNumber, issuerId);
+    }
+
+    @GetMapping("/states")
+    public List<String> getStates(){
+        return certificateService.getStates();
+    }
+
+    @GetMapping("/types")
+    public List<String> getCertificateTypes(){
+        return certificateService.getCertificateTypes();
     }
 }

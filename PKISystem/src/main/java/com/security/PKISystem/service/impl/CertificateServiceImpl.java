@@ -126,6 +126,22 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 
+    @Override
+    public List<String> getStates() {
+        List<String> states = new ArrayList<>();
+        for(State s: State.values())
+            states.add(s.toString());
+        return states;
+    }
+
+    @Override
+    public List<String> getCertificateTypes() {
+        List<String> types = new ArrayList<>();
+        for(CertificateType ct: CertificateType.values())
+            types.add(ct.toString());
+        return types;
+    }
+
 
     private void revokeCertificate(Long certificateId){
         Certificate certificate = certificateRepository.findCertificateById(certificateId);

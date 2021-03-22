@@ -2,6 +2,7 @@ package com.security.PKISystem.service;
 
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.CertificateType;
+import com.security.PKISystem.domain.State;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,4 +28,8 @@ public interface CertificateService {
     boolean isCertificateValid(Long serialNumber, Long issuerId);
 
     Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
+
+    List<String> getStates();
+
+    List<String> getCertificateTypes();
 }
