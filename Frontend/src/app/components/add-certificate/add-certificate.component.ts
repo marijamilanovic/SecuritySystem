@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
   selector: 'app-add-certificate',
@@ -30,13 +31,23 @@ export class AddCertificateComponent implements OnInit {
   hoveredDate: NgbDate | null = null;
   fromDate: NgbDate;
   toDate: NgbDate | null = null;
+  types: any[]=[];
+  dropDownTypes: any[]=[];
+  selectedTerm: any;
+  isChecked: boolean = false;
 
-  constructor(calendar: NgbCalendar) { 
+
+
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
 
   ngOnInit(): void {
+    this.certificateService.getTypes().subscribe((data: any[]) => {
+      this.types = data;
+      console.log(this.types);
+    });
   }
 
   onDateSelection(date: NgbDate) {
@@ -60,6 +71,10 @@ export class AddCertificateComponent implements OnInit {
 
   isRange(date: NgbDate) {
     return date.equals(this.fromDate) || (this.toDate && date.equals(this.toDate)) || this.isInside(date) || this.isHovered(date);
+  }
+
+  addNewCertificate(){
+    
   }
 
 }

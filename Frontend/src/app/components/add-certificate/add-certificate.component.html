@@ -11,8 +11,9 @@
             <input type="text" placeholder="Country" name="country" style="width: 300px" required>
             <input type="text" placeholder="Email" name="email" style="width: 300px" required>
 
-            <br><br>
-
+            <br>
+            <hr style="border-color:yellow; border-width: 2px;">
+            <br>
             <h5>Validation period</h5>
             <ngb-datepicker #dp (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
             </ngb-datepicker>
@@ -28,14 +29,23 @@
               </span>
             </ng-template>
 
-            <!-- Type -->
+            <br>
+            <br>
+            <div> 
+                <h5>Certificate type</h5><select name="typeSelect" >
+                    <option *ngFor="let type of types">{{type}}</option>
+                </select>
+            </div>
+
             <!-- Issuer serial number -->
             <!-- Issuer name -->
-
-            <!-- Keystore name -->
-            <!-- Keystore password -->
-
+            
             <br>
+            <hr style="border-color:yellow; border-width: 2px;">
+            <br>
+            <input type="password" placeholder="KeyStore password" name="password" style="width: 300px" required>
+
+            <br><br>
             <button class="btn btn-warning">Save</button>
         </form>
     </div>

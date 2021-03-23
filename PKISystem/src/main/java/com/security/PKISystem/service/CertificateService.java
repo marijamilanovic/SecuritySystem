@@ -3,6 +3,7 @@ package com.security.PKISystem.service;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.CertificateType;
 import com.security.PKISystem.domain.State;
+import com.security.PKISystem.dto.CertificateDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface CertificateService {
     List<String> getStates();
 
     List<String> getCertificateTypes();
+
+    List<CertificateDto> getAllIssuers();
 }

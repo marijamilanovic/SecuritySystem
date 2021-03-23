@@ -6,6 +6,7 @@ import com.security.PKISystem.domain.State;
 import java.util.Date;
 
 public class CertificateDto {
+    private Long id;
     private Long serialNumber;
     private String publicKey;
     private String issuerName;
@@ -17,7 +18,8 @@ public class CertificateDto {
 
     public CertificateDto(){}
 
-    public CertificateDto(Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+    public CertificateDto(Long id, Long serialNumber, String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+        this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
@@ -26,6 +28,14 @@ public class CertificateDto {
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getSerialNumber() {

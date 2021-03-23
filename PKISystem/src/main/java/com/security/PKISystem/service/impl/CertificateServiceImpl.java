@@ -3,6 +3,8 @@ package com.security.PKISystem.service.impl;
 import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
+import com.security.PKISystem.domain.mapper.CertificateMapper;
+import com.security.PKISystem.dto.CertificateDto;
 import com.security.PKISystem.dto.RequestCertificateDto;
 import com.security.PKISystem.exception.NotFoundException;
 import com.security.PKISystem.keystores.KeyStoreReader;
@@ -179,6 +181,17 @@ public class CertificateServiceImpl implements CertificateService {
         for(CertificateType ct: CertificateType.values())
             types.add(ct.toString());
         return types;
+    }
+
+    @Override
+    public List<CertificateDto> getAllIssuers() {
+        List<CertificateDto> certificateDtos = new ArrayList<>();
+        for(Certificate c: certificateRepository.findAll()){
+            if(c.getCertificateType().equals("INTERMEDIATE")){
+                certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
+            }
+        }
+        return certificateDtos;
     }
 
 

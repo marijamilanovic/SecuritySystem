@@ -1,6 +1,7 @@
 package com.security.PKISystem.controller;
 
 import com.security.PKISystem.domain.Certificate;
+import com.security.PKISystem.dto.CertificateDto;
 import com.security.PKISystem.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,10 @@ public class CertificateController {
     @PostMapping("/root")
     public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
+    }
+
+    @GetMapping("/issuers")
+    public List<CertificateDto> getAllIssuers(){
+        return null;
     }
 }
