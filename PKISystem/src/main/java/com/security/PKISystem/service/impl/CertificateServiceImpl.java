@@ -209,7 +209,7 @@ public class CertificateServiceImpl implements CertificateService {
     public List<CertificateDto> getAllIssuers() {
         List<CertificateDto> certificateDtos = new ArrayList<>();
         for(Certificate c: certificateRepository.findAll()){
-            if(c.getCertificateType().equals("INTERMEDIATE")){
+            if(c.getCertificateType() == CertificateType.INTERMEDIATE){
                 certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
             }
         }

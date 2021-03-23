@@ -32,11 +32,7 @@ export class AddCertificateComponent implements OnInit {
   fromDate: NgbDate;
   toDate: NgbDate | null = null;
   types: any[]=[];
-  dropDownTypes: any[]=[];
-  selectedTerm: any;
-  isChecked: boolean = false;
-
-
+  issuers: any[]=[];
 
   constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
@@ -47,6 +43,10 @@ export class AddCertificateComponent implements OnInit {
     this.certificateService.getTypes().subscribe((data: any[]) => {
       this.types = data;
       console.log(this.types);
+    });
+    this.certificateService.getAllIssuers().subscribe((data: any[]) => {
+      this.issuers = data;
+      console.log(this.issuers);
     });
   }
 
