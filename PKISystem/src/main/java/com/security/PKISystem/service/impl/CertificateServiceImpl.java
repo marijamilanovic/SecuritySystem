@@ -172,12 +172,18 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate.getState() == State.VALID;
     }
 
+    public boolean checkSubjectDate(RequestCertificateDto requestCertificateDto){
+        //Certificate certificate = findCertificateByIssuerSerialAndIssuerName(requestCertificateDto.get)
+        return false;
+    }
+
     ///////
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
         return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
     }
+
 
     @Override
     public List<String> getStates() {
@@ -204,6 +210,11 @@ public class CertificateServiceImpl implements CertificateService {
             }
         }
         return certificateDtos;
+    }
+
+    @Override
+    public Certificate findCertificateByIssuerSerialAndIssuerName(Long serialNumber, String issuerName) {
+        return certificateRepository.findCertificateByIssuerSerialAndIssuerName(serialNumber, issuerName);
     }
 
 

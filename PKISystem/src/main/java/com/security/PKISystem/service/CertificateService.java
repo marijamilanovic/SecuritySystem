@@ -36,4 +36,6 @@ public interface CertificateService {
     List<String> getCertificateTypes();
 
     List<CertificateDto> getAllIssuers();
+
+    Certificate findCertificateByIssuerSerialAndIssuerName(Long serialNumber, String issuerName);
 }
