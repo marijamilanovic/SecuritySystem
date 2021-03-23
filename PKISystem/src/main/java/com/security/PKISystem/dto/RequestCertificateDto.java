@@ -29,7 +29,7 @@ public class RequestCertificateDto {
         this.serialNumber = certificate.getSerialNumber();
         this.publicKey = certificate.getPublicKey();
         this.issuedByName = certificate.getIssuerName();
-        this.issuedById = certificate.getIssuerId();
+        this.issuedById = certificate.getIssuerSerial();
         this.validFrom = certificate.getValidFrom();
         this.validTo = certificate.getValidTo();
         this.certificateType = certificate.getCertificateType();

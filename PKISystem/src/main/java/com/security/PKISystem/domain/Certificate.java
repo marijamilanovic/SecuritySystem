@@ -19,11 +19,11 @@ public class Certificate implements Serializable {
     @Column(length=1000)
     private String publicKey;
     @Column
+    private String owner;
+    @Column
     private String issuerName;
     @Column
-    private String issuedTo;
-    @Column
-    private Long issuerId;
+    private Long issuerSerial;
     @Column
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
@@ -39,23 +39,24 @@ public class Certificate implements Serializable {
 
     public Certificate(){}
 
-    public Certificate(Long id, String serialNumber, String publicKey, String issuerName,String issuedTo, Long issuerId, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+    public Certificate(Long id, String serialNumber, String publicKey, String issuerName, String owner,
+                       Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
-        this.issuerId = issuerId;
-        this.issuedTo = issuedTo;
+        this.issuerSerial = issuerSerial;
+        this.owner = owner;
         this.validFrom = validFrom;
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
     }
 
-    public Certificate(String publicKey, String issuerName, Long issuerId, Date validFrom, Date validTo) {
+    public Certificate(String publicKey, String issuerName, Long issuerSerial, Date validFrom, Date validTo) {
         this.publicKey = publicKey;
         this.issuerName = issuerName;
-        this.issuerId = issuerId;
+        this.issuerSerial = issuerSerial;
         this.validFrom = validFrom;
         this.validTo = validTo;
     }
@@ -84,12 +85,12 @@ public class Certificate implements Serializable {
         this.issuerName = issuerName;
     }
 
-    public Long getIssuerId() {
-        return issuerId;
+    public Long getIssuerSerial() {
+        return issuerSerial;
     }
 
-    public void setIssuerId(Long issuerId) {
-        this.issuerId = issuerId;
+    public void setIssuerSerial(Long issuerSerial) {
+        this.issuerSerial = issuerSerial;
     }
 
     public Date getValidFrom() {
@@ -132,11 +133,11 @@ public class Certificate implements Serializable {
         this.state = state;
     }
 
-    public String getIssuedTo() {
-        return issuedTo;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setIssuedTo(String issuedTo) {
-        this.issuedTo = issuedTo;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }
