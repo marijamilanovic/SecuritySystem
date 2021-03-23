@@ -8,6 +8,7 @@ import { CertificateService } from 'src/app/service/certificate.service';
 })
 export class ValidationCertificateComponent implements OnInit {
 
+  isChecked: boolean = false;
 
   constructor(private certificate: CertificateService) { }
 
@@ -16,5 +17,15 @@ export class ValidationCertificateComponent implements OnInit {
       console.log(data);
     });
   }
+
+  checkCertificate(check: boolean){
+    if(check == true){
+      this.isChecked = false;
+    }else{
+      this.isChecked = true;
+    }
+    
+  }
+
 
 }

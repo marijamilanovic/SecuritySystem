@@ -13,7 +13,7 @@ public class CertificateMapper {
         certificateDto.setIssuerName(certificate.getIssuerName());
         certificateDto.setState(certificate.getState());
         certificateDto.setPublicKey(certificate.getPublicKey());
-        //certificateDto.setSerialNumber(certificate.getSerialNumber());        ISPRAVITI
+        //certificateDto.setSerialNumber(certificate.getSerialNumber());
         certificateDto.setValidFrom(certificate.getValidTo());
         certificateDto.setValidTo(certificate.getValidTo());
         return certificateDto;

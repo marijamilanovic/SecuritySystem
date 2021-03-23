@@ -39,14 +39,21 @@
 
             <!-- Issuer serial number -->
             <!-- Issuer name -->
-            
+            <br>
+            <br>
+            <div> 
+                <h5>Issuer</h5><select name="issuerSelect" >
+                    <option *ngFor="let issuer of issuers">{{issuer.owner}} {{issuer.serialNumber}}</option>
+                </select>
+            </div>
+
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
             <input type="password" placeholder="KeyStore password" name="password" style="width: 300px" required>
 
             <br><br>
-            <button class="btn btn-warning">Save</button>
+            <button class="btn btn-warning" style="width: 200px">Save</button>
         </form>
     </div>
 </div>

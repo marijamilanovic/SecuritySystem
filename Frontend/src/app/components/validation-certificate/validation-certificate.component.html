@@ -1,12 +1,22 @@
 <div class="page">
     <div class="form">
-        <form class="ngform">
+        <form class="ngform" style="width: 600px">
             <h3>Certificate checker</h3>
             <br>
-            <div>
-                <input type="text" placeholder="Certificate" name="certificate" required>
+            <div *ngIf='!isChecked'>
+                <input type="text" placeholder="Certificate" name="certificate" style="width: 400px">
+                <button class="btn btn-warning" style="width: 200px" (click)="checkCertificate(false)">Check</button>
             </div>
-            <button class="btn btn-warning">Check</button>
+            <div *ngIf='isChecked'>
+                <input type="text" placeholder="Certificate" name="certificate" style="width: 400px" disabled>
+                <button class="btn btn-warning" style="width: 200px" disabled>Check</button>
+                <br>
+                <hr style="border-color:yellow; border-width: 2px;">
+                <br>
+                <button class="btn btn-warning" style="width: 200px" (click)="checkCertificate(true)">Check another one</button>
+            </div>
+            
+            
         </form>
     </div>
 </div>

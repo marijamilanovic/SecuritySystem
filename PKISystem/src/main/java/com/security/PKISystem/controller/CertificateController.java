@@ -58,6 +58,6 @@ public class CertificateController {
 
     @GetMapping("/issuers")
     public List<CertificateDto> getAllIssuers(){
-        return null;
+        return certificateService.getAllIssuers();
     }
 }
