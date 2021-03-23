@@ -21,7 +21,7 @@ public class SubjectData {
 
 	}
 
-	public SubjectData(KeyPair keyPair, RequestCertificateDto certificateDto) {
+	public SubjectData(KeyPair keyPair, RequestCertificateDto certificateDto, Long serialNumber) {
 		//TODO: Napraviti mapper
 		this.publicKey = keyPair.getPublic();
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
@@ -32,13 +32,13 @@ public class SubjectData {
 		builder.addRDN(BCStyle.OU, certificateDto.getOrganisationalUnit());
 		builder.addRDN(BCStyle.C, certificateDto.getCountry());
 		builder.addRDN(BCStyle.E, certificateDto.getEmail());
-		builder.addRDN(BCStyle.SERIALNUMBER, certificateDto.getSerialNumber());
+		builder.addRDN(BCStyle.SERIALNUMBER, serialNumber.toString());
 		this.x500name = builder.build();
-		this.serialNumber = "1";
+		this.serialNumber = serialNumber.toString();
 
 
-		this.startDate = certificateDto.getValidFrom();
-		this.endDate = certificateDto.getValidTo();
+		this.startDate = certificateDto.getCertificateDto().getValidFrom();
+		this.endDate = certificateDto.getCertificateDto().getValidTo();
 	}
 
 	public SubjectData(PublicKey publicKey, X500Name x500name, String serialNumber, Date startDate, Date endDate) {

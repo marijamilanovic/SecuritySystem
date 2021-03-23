@@ -15,7 +15,7 @@ public class Certificate implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String serialNumber;
+    private Long serialNumber;
     @Column(length=1000)
     private String publicKey;
     @Column
@@ -39,9 +39,22 @@ public class Certificate implements Serializable {
 
     public Certificate(){}
 
-    public Certificate(Long id, String serialNumber, String publicKey, String issuerName, String owner,
+    public Certificate(Long id, Long serialNumber, String publicKey, String issuerName, String owner,
                        Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.id = id;
+        this.serialNumber = serialNumber;
+        this.publicKey = publicKey;
+        this.issuerName = issuerName;
+        this.issuerSerial = issuerSerial;
+        this.owner = owner;
+        this.validFrom = validFrom;
+        this.validTo = validTo;
+        this.certificateType = certificateType;
+        this.state = state;
+    }
+
+    public Certificate(Long serialNumber, String publicKey, String issuerName, String owner,
+                       Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state) {
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
@@ -61,11 +74,11 @@ public class Certificate implements Serializable {
         this.validTo = validTo;
     }
 
-    public String getSerialNumber() {
+    public Long getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(String serialNumber) {
+    public void setSerialNumber(Long serialNumber) {
         this.serialNumber = serialNumber;
     }
 

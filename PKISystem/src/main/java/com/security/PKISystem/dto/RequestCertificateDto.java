@@ -1,15 +1,7 @@
 package com.security.PKISystem.dto;
 
-import com.security.PKISystem.domain.Certificate;
-import com.security.PKISystem.domain.CertificateType;
-
-import java.util.Date;
-
 public class RequestCertificateDto {
-    private String serialNumber;
-    private String publicKey;
-    private String issuedByName;
-    private Long issuedById;
+    private CertificateDto certificateDto;
     private String issuedToCommonName;
     private String surname;
     private String givenName;
@@ -17,90 +9,31 @@ public class RequestCertificateDto {
     private String organisationalUnit;
     private String country;
     private String email;
-    private Date validFrom;
-    private Date validTo;
-    private CertificateType certificateType;
     private String keystoreName;
     private String keystorePassword;
 
     public RequestCertificateDto(){}
 
-    public RequestCertificateDto(Certificate certificate){
-        this.serialNumber = certificate.getSerialNumber();
-        this.publicKey = certificate.getPublicKey();
-        this.issuedByName = certificate.getIssuerName();
-        this.issuedById = certificate.getIssuerSerial();
-        this.validFrom = certificate.getValidFrom();
-        this.validTo = certificate.getValidTo();
-        this.certificateType = certificate.getCertificateType();
-    }
-
-    public RequestCertificateDto(String serialNumber, String publicKey, String issuedByName, Long issuedById, Date validFrom, Date validTo, CertificateType certificateType, String keystoreName, String keystorePassword) {
-        this.serialNumber = serialNumber;
-        this.publicKey = publicKey;
-        this.issuedByName = issuedByName;
-        this.issuedById = issuedById;
-        this.validFrom = validFrom;
-        this.validTo = validTo;
-        this.certificateType = certificateType;
+    public RequestCertificateDto(CertificateDto certificateDto, String issuedToCommonName, String surname, String givenName,
+                                 String organisation, String organisationalUnit, String country, String email, String keystoreName, String keystorePassword) {
+        this.certificateDto = certificateDto;
+        this.issuedToCommonName = issuedToCommonName;
+        this.surname = surname;
+        this.givenName = givenName;
+        this.organisation = organisation;
+        this.organisationalUnit = organisationalUnit;
+        this.country = country;
+        this.email = email;
         this.keystoreName = keystoreName;
         this.keystorePassword = keystorePassword;
     }
 
-    public String getSerialNumber() {
-        return serialNumber;
+    public CertificateDto getCertificateDto() {
+        return certificateDto;
     }
 
-    public void setSerialNumber(String serialNumber) {
-        this.serialNumber = serialNumber;
-    }
-
-    public String getPublicKey() {
-        return publicKey;
-    }
-
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    public String getIssuedByName() {
-        return issuedByName;
-    }
-
-    public void setIssuedByName(String issuedByName) {
-        this.issuedByName = issuedByName;
-    }
-
-    public Long getIssuedById() {
-        return issuedById;
-    }
-
-    public void setIssuedById(Long issuedById) {
-        this.issuedById = issuedById;
-    }
-
-    public Date getValidFrom() {
-        return validFrom;
-    }
-
-    public void setValidFrom(Date validFrom) {
-        this.validFrom = validFrom;
-    }
-
-    public Date getValidTo() {
-        return validTo;
-    }
-
-    public void setValidTo(Date validTo) {
-        this.validTo = validTo;
-    }
-
-    public CertificateType getCertificateType() {
-        return certificateType;
-    }
-
-    public void setCertificateType(CertificateType certificateType) {
-        this.certificateType = certificateType;
+    public void setCertificateDto(CertificateDto certificateDto) {
+        this.certificateDto = certificateDto;
     }
 
     public String getKeystoreName() {

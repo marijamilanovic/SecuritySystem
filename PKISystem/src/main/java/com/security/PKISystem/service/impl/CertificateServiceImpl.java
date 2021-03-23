@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -51,11 +48,12 @@ public class CertificateServiceImpl implements CertificateService {
         //TODO: Proveriti userove sertifikate
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
+        // TODO: keystore u zavisnosti od tipa sertifikata
         keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
 
         KeyPair keyPairSubject = generateKeyPair();
 
-        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(requestCertificateDto.getIssuedByName());
+        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(requestCertificateDto.getCertificateDto().getIssuerName());
         Certificate issuerCertificate = new Certificate();
 
         for(Certificate c: issuerCertificates){
@@ -66,18 +64,25 @@ public class CertificateServiceImpl implements CertificateService {
             }
         }
 
-        Certificate certForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
-                requestCertificateDto.getIssuedByName(), requestCertificateDto.getIssuedById(),
-                requestCertificateDto.getValidFrom(), requestCertificateDto.getValidTo());
-
-        certForDatabase = this.certificateRepository.save(certForDatabase);
-        requestCertificateDto.setSerialNumber(certForDatabase.getId().toString());
+        Random rand = new Random();
+        Long serial = rand.nextLong();
+        Certificate certForDatabase = new Certificate(
+                serial,
+                Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
+                requestCertificateDto.getCertificateDto().getIssuerName(),
+                requestCertificateDto.getIssuedToCommonName(),
+                requestCertificateDto.getCertificateDto().getIssuerSerial(),
+                requestCertificateDto.getCertificateDto().getValidFrom(),
+                requestCertificateDto.getCertificateDto().getValidTo(),
+                requestCertificateDto.getCertificateDto().getCertificateType(),
+                State.VALID);
+        this.certificateRepository.save(certForDatabase);
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
         IssuerData issuerData = keyStoreReader.readIssuerFromStore(requestCertificateDto.getKeystoreName(), issuerCertificate.getSerialNumber().toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
                 requestCertificateDto.getKeystorePassword().toCharArray());
-        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto);
+        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
 
         CertificateStatus certificateStatus = new CertificateStatus();
         certificateStatus.setCertificateId(certForDatabase.getId());
@@ -88,7 +93,7 @@ public class CertificateServiceImpl implements CertificateService {
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
 
-        keyStoreWriter.write(requestCertificateDto.getSerialNumber().toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray() , certificate);
+        keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
 
         keyStoreWriter.saveKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
 
@@ -103,29 +108,34 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
 
-        Certificate certificateForDatabase = new Certificate(Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
-                requestCertificateDto.getIssuedByName(), requestCertificateDto.getIssuedById(),
-                requestCertificateDto.getValidFrom(), requestCertificateDto.getValidTo());
+        Random rand = new Random();
+        Long serial = rand.nextLong();
+        Certificate certificateForDatabase = new Certificate(
+                serial,
+                Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
+                requestCertificateDto.getCertificateDto().getIssuerName(),
+                requestCertificateDto.getIssuedToCommonName(),
+                requestCertificateDto.getCertificateDto().getIssuerSerial(),
+                requestCertificateDto.getCertificateDto().getValidFrom(),
+                requestCertificateDto.getCertificateDto().getValidTo(),
+                CertificateType.ROOT, State.VALID);
 
         this.certificateRepository.save(certificateForDatabase);
-        Long idIssuer = certificateForDatabase.getIssuerSerial();
-        certificateForDatabase.setIssuerSerial(idIssuer);
+        certificateForDatabase.setIssuerSerial(certificateForDatabase.getIssuerSerial());
         this.certificateRepository.save(certificateForDatabase);
-        
-        requestCertificateDto.setSerialNumber(certificateForDatabase.getId().toString());
 
         CertificateStatus certificateStatus = new CertificateStatus();
         certificateStatus.setCertificateId(certificateForDatabase.getId());
         certificateStatus.setState(State.VALID);
         this.certificateStatusService.saveCertificateStatus(certificateStatus);
 
-        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto);
+        SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
         IssuerData issuerData = new IssuerData(keyPairSubject.getPrivate(), requestCertificateDto);
 
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
 
-        keyStoreWriter.write(requestCertificateDto.getSerialNumber(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
+        keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
 
         keyStoreWriter.saveKeyStore(rootFileName, requestCertificateDto.getKeystorePassword().toCharArray());
 
@@ -240,11 +250,10 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<RequestCertificateDto> findAll() {
-        List<Certificate> certificates = certificateRepository.findAll();
-        List<RequestCertificateDto> certificateDtos = new ArrayList<>();
-        for(Certificate c:certificates){
-            certificateDtos.add(new RequestCertificateDto(c));
+    public List<CertificateDto> findAll() {
+        List<CertificateDto> certificateDtos = new ArrayList<>();
+        for(Certificate c: certificateRepository.findAll()){
+            certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
         }
         return certificateDtos;
     }

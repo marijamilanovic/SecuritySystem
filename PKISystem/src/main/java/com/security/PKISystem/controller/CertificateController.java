@@ -26,7 +26,7 @@ public class CertificateController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RequestCertificateDto>> getCertificates(){
+    public ResponseEntity<List<CertificateDto>> getCertificates(){
         return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
     }
 
