@@ -23,7 +23,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
 
     Certificate findCertificateBySerialNumberAndIssuerSerial(Long serialNumber, Long issuerSerial);
 
-    Certificate findCertificateByIssuerSerialAndIssuerName(Long serialNumber, String issuerName);
+    Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner);
 }
 
 

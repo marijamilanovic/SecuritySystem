@@ -47,6 +47,9 @@ public class CertificateServiceImpl implements CertificateService {
 
         //TODO: Proveriti userove sertifikate
 
+        if(!isNewCertificateValid(requestCertificateDto))
+            return null;
+
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
         keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
@@ -102,6 +105,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
+        if(!isNewCertificateValid(requestCertificateDto))
+            return null;
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
@@ -168,6 +173,21 @@ public class CertificateServiceImpl implements CertificateService {
         throw new NotFoundException("Certificate not found.");
     }
 
+    public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
+        Certificate issuerCertificate = findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
+                requestCertificateDto.getCertificateDto().getIssuerName());
+        if (requestCertificateDto != null){
+            if(requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT && checkNewCertificateDate(requestCertificateDto)){
+                    return true;
+            }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate)){
+                    return true;
+            }
+            // todo: certificate chain, provera javnog kljuca
+            return false;
+        }
+        throw new NotFoundException("Certificate not found.");
+    }
+
     public boolean checkDate(Date validFrom, Date validTo){
         long current = new Date().getTime();
         return current >= validFrom.getTime() && current <= validTo.getTime();
@@ -179,11 +199,21 @@ public class CertificateServiceImpl implements CertificateService {
 
     // todo: ocsp
     public boolean isNotRevoked(Certificate certificate){
-        return certificate.getState() == State.VALID;
+        return certificate.getState() == State.VALID || certificate.getCertificateType() == CertificateType.ROOT;
     }
 
-    public boolean checkSubjectDate(RequestCertificateDto requestCertificateDto){
-        //Certificate certificate = findCertificateByIssuerSerialAndIssuerName(requestCertificateDto.get)
+    public boolean checkNewCertificateDate(RequestCertificateDto requestCertificateDto){
+        Date validFrom = requestCertificateDto.getCertificateDto().getValidFrom();
+        Date validTo = requestCertificateDto.getCertificateDto().getValidTo();
+        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
+        Certificate issuerCertificate = findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
+                                                                                requestCertificateDto.getCertificateDto().getIssuerName());
+        if(checkDate(validFrom, validTo) && certificateType == CertificateType.ROOT){
+            return true;
+        }else if(checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
+                validTo.before(issuerCertificate.getValidTo())){
+            return true;
+        }
         return false;
     }
 
@@ -223,8 +253,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate findCertificateByIssuerSerialAndIssuerName(Long serialNumber, String issuerName) {
-        return certificateRepository.findCertificateByIssuerSerialAndIssuerName(serialNumber, issuerName);
+    public Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner) {
+        return certificateRepository.findCertificateBySerialNumberAndOwner(serialNumber, owner);
     }
 
 
