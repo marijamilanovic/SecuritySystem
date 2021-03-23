@@ -30,7 +30,7 @@ public class IssuerData {
 		builder.addRDN(BCStyle.OU, certificateDto.getOrganisationalUnit());
 		builder.addRDN(BCStyle.C, certificateDto.getCountry());
 		builder.addRDN(BCStyle.E, certificateDto.getEmail());
-		builder.addRDN(BCStyle.SERIALNUMBER, certificateDto.getSerialNumber());
+		builder.addRDN(BCStyle.SERIALNUMBER, certificateDto.getCertificateDto().getIssuerSerial().toString());
 
 		this.x500name = builder.build();
 	}

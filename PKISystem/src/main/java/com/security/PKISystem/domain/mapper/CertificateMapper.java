@@ -3,6 +3,8 @@ package com.security.PKISystem.domain.mapper;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.dto.CertificateDto;
 
+import java.math.BigInteger;
+
 public class CertificateMapper {
 
     public static CertificateDto mapCertificateToCertificateDto(Certificate certificate) {
@@ -13,7 +15,7 @@ public class CertificateMapper {
         certificateDto.setIssuerName(certificate.getIssuerName());
         certificateDto.setState(certificate.getState());
         certificateDto.setPublicKey(certificate.getPublicKey());
-        //certificateDto.setSerialNumber(certificate.getSerialNumber());        ISPRAVITI
+        certificateDto.setSerialNumber(new Long(certificate.getSerialNumber()));
         certificateDto.setValidFrom(certificate.getValidTo());
         certificateDto.setValidTo(certificate.getValidTo());
         return certificateDto;
