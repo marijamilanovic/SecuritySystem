@@ -16,14 +16,10 @@ import java.util.List;
 @RequestMapping("/certificate")
 @CrossOrigin(origins = "http://localhost:4200")
 public class CertificateController {
+
     @Autowired
     private CertificateService certificateService;
 
-    @PostMapping
-    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
-        X509Certificate cert = this.certificateService.addCertificate(requestCertificateDto);
-        return ResponseEntity.ok().build();
-    }
 
     @GetMapping
     public ResponseEntity<List<CertificateDto>> getCertificates(){
@@ -31,14 +27,19 @@ public class CertificateController {
     }
 
     @GetMapping("/{serialNumber}/{issuerId}")
-    public Certificate getCertificateBySerialNumberAndIssuerId(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
+    public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
         return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 
     // todo: ocsp
     @GetMapping("/valid/{serialNumber}/{issuerId}")
-    public boolean isCertificateValid(@PathVariable("serialNumber") Long serialNumber, @PathVariable("issuerId") Long issuerId){
+    public boolean isCertificateValid(@PathVariable Long serialNumber, @PathVariable Long issuerId){
         return certificateService.isCertificateValid(serialNumber, issuerId);
+    }
+
+    @GetMapping("/issuers")
+    public List<CertificateDto> getAllIssuers(){
+        return certificateService.getAllIssuers();
     }
 
     @GetMapping("/states")
@@ -51,13 +52,19 @@ public class CertificateController {
         return certificateService.getCertificateTypes();
     }
 
+    @PostMapping
+    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+        this.certificateService.addCertificate(requestCertificateDto);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/root")
     public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
     }
 
-    @GetMapping("/issuers")
-    public List<CertificateDto> getAllIssuers(){
-        return certificateService.getAllIssuers();
+    @DeleteMapping("/revoke/{serialNumber}/{issuerSerial}")
+    public void revokeCertificate(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
+        certificateService.revokeCertificateChain(serialNumber, issuerSerial);
     }
 }

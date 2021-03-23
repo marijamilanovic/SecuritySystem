@@ -11,19 +11,19 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
 
     Certificate save(Certificate certificate);
 
-    List<Certificate> findAll();
-
     Certificate findCertificateByCertificateType(CertificateType certificateType);
 
     Certificate findCertificateById(Long id);
 
-    List<Certificate> findCertificateByIssuerName(String issuedByName);
-
-    List<Certificate> findCertificateByIssuerSerial(Long issuerSerial);
-
     Certificate findCertificateBySerialNumberAndIssuerSerial(Long serialNumber, Long issuerSerial);
 
     Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner);
+
+    List<Certificate> findAll();
+
+    List<Certificate> findCertificateByIssuerName(String issuedByName);
+
+    List<Certificate> findCertificateByIssuerSerial(Long issuerSerial);
 }
 
 

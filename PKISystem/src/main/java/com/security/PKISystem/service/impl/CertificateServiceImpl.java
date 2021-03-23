@@ -68,7 +68,7 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         Random rand = new Random();
-        Long serial = rand.nextLong();
+        Long serial = Math.abs(rand.nextLong());
         Certificate certForDatabase = new Certificate(
                 serial,
                 Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
@@ -114,7 +114,7 @@ public class CertificateServiceImpl implements CertificateService {
         KeyPair keyPairSubject = generateKeyPair();
 
         Random rand = new Random();
-        Long serial = rand.nextLong();
+        Long serial = Math.abs(rand.nextLong());
         Certificate certificateForDatabase = new Certificate(
                 serial,
                 Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
@@ -147,17 +147,6 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-
-
-    @Override
-    public void revokeCertificateChain(Long certificateId) {
-        revokeCertificate(certificateId);
-        if(certificateRepository.findCertificateById(certificateId).getCertificateType() == CertificateType.END_ENTITY)
-            return;
-        for(Certificate c : certificateRepository.findCertificateByIssuerSerial(certificateId)){
-            revokeCertificateChain(c.getId());
-        }
-    }
 
     // VALIDATION
     @Override
@@ -257,11 +246,20 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.findCertificateBySerialNumberAndOwner(serialNumber, owner);
     }
 
+    @Override
+    public void revokeCertificateChain(Long serialNumber, Long issuerSerial) {
+        revokeCertificate(serialNumber, issuerSerial);
+        if(certificateRepository.findCertificateById(serialNumber).getCertificateType() == CertificateType.END_ENTITY)
+            return;
+        for(Certificate c : certificateRepository.findCertificateByIssuerSerial(serialNumber)){
+            revokeCertificateChain(c.getId(), c.getIssuerSerial());
+        }
+    }
 
-    private void revokeCertificate(Long certificateId){
-        Certificate certificate = certificateRepository.findCertificateById(certificateId);
+    private void revokeCertificate(Long serialNumber, Long issuerSerial){
+        Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerSerial);
         certificate.setState(State.REVOKED);
-        certificateStatusService.revokeCertificate(certificateId);
+        certificateStatusService.revokeCertificate(serialNumber);
         certificateRepository.save(certificate);
     }
 

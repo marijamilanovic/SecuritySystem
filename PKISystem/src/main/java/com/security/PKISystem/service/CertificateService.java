@@ -2,40 +2,38 @@ package com.security.PKISystem.service;
 
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.CertificateType;
-import com.security.PKISystem.domain.State;
 import com.security.PKISystem.dto.CertificateDto;
+import com.security.PKISystem.dto.RequestCertificateDto;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import com.security.PKISystem.dto.RequestCertificateDto;
-
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 @Service
 public interface CertificateService {
     Certificate save(Certificate certificate);
 
-    List<CertificateDto> findAll();
-
     Certificate findCertificateByCertificateType(CertificateType certificateType);
 
     Certificate findCertificateById(Long id);
+
+    Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
+
+    Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner);
+
+    List<CertificateDto> findAll();
+
+    List<CertificateDto> getAllIssuers();
 
     X509Certificate addCertificate(RequestCertificateDto requestCertificateDto);
 
     X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto);
 
-    void revokeCertificateChain(Long certificateId);
+    void revokeCertificateChain(Long serialNumber, Long issuerSerial);
 
     boolean isCertificateValid(Long serialNumber, Long issuerId);
-
-    Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
 
     List<String> getStates();
 
     List<String> getCertificateTypes();
-
-    List<CertificateDto> getAllIssuers();
-
-    Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner);
 }
