@@ -12,7 +12,9 @@ import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateStatusService;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.security.*;
 import java.security.cert.X509Certificate;
@@ -23,10 +25,20 @@ import java.util.List;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
+
+    @Value("${rootFileName}")
+    private String rootFileName;
+    @Value("${intermediateFileName}")
+    private String intermediateFileName;
+    @Value("${endEntityFileName}")
+    private String endFileName;
+
     @Autowired
     private CertificateRepository certificateRepository;
     @Autowired
     private CertificateStatusService certificateStatusService;
+
+    public CertificateServiceImpl(){Security.addProvider(new BouncyCastleProvider());}
 
     @Override
     public Certificate save(Certificate certificate) {
@@ -87,7 +99,7 @@ public class CertificateServiceImpl implements CertificateService {
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
-        keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName() + ".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+        keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
 
         KeyPair keyPairSubject = generateKeyPair();
 
@@ -96,8 +108,8 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getValidFrom(), requestCertificateDto.getValidTo());
 
         this.certificateRepository.save(certificateForDatabase);
-        Long idIssuer = certificateForDatabase.getIssuerId();
-        certificateForDatabase.setIssuerId(idIssuer);
+        Long idIssuer = certificateForDatabase.getIssuerSerial();
+        certificateForDatabase.setIssuerSerial(idIssuer);
         this.certificateRepository.save(certificateForDatabase);
         
         requestCertificateDto.setSerialNumber(certificateForDatabase.getId().toString());
@@ -115,7 +127,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         keyStoreWriter.write(requestCertificateDto.getSerialNumber(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
 
-        keyStoreWriter.saveKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+        keyStoreWriter.saveKeyStore(rootFileName, requestCertificateDto.getKeystorePassword().toCharArray());
 
         return certificate;
     }
@@ -127,7 +139,7 @@ public class CertificateServiceImpl implements CertificateService {
         revokeCertificate(certificateId);
         if(certificateRepository.findCertificateById(certificateId).getCertificateType() == CertificateType.END_ENTITY)
             return;
-        for(Certificate c : certificateRepository.findCertificateByIssuerId(certificateId)){
+        for(Certificate c : certificateRepository.findCertificateByIssuerSerial(certificateId)){
             revokeCertificateChain(c.getId());
         }
     }
@@ -164,7 +176,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
-        return certificateRepository.findCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+        return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
     }
 
     @Override
