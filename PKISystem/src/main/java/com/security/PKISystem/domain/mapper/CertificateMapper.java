@@ -9,7 +9,7 @@ public class CertificateMapper {
         CertificateDto certificateDto = new CertificateDto();
         certificateDto.setId(certificate.getId());
         certificateDto.setCertificateType(certificate.getCertificateType());
-        certificateDto.setIssuerId(certificate.getIssuerId());
+        certificateDto.setIssuerSerial(certificate.getIssuerSerial());
         certificateDto.setIssuerName(certificate.getIssuerName());
         certificateDto.setState(certificate.getState());
         certificateDto.setPublicKey(certificate.getPublicKey());
