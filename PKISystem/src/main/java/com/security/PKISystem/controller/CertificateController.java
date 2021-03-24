@@ -58,6 +58,16 @@ public class CertificateController {
         return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
     }
 
+    @PostMapping("/intermediate")
+    public ResponseEntity<X509Certificate> generateIntermediateCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addIntermediateCertificate(certificate), HttpStatus.OK);
+    }
+
+    @PostMapping("/end_entity")
+    public ResponseEntity<X509Certificate> generateEndEntityCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addEndEntityCertificate(certificate), HttpStatus.OK);
+    }
+
     @DeleteMapping("/revoke/{serialNumber}/{issuerSerial}")
     public void revokeCertificate(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
         certificateService.revokeCertificateChain(serialNumber, issuerSerial);

@@ -29,6 +29,10 @@ public interface CertificateService {
 
     X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto);
 
+    X509Certificate addIntermediateCertificate(RequestCertificateDto requestCertificateDto);
+
+    X509Certificate addEndEntityCertificate(RequestCertificateDto requestCertificateDto);
+
     void revokeCertificateChain(Long serialNumber, Long issuerSerial);
 
     List<String> getStates();

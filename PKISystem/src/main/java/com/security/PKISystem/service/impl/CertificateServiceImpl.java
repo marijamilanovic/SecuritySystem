@@ -147,6 +147,17 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
+    //TODO: Implementirati
+    @Override
+    public X509Certificate addIntermediateCertificate(RequestCertificateDto requestCertificateDto) {
+        return addRootCertificate(requestCertificateDto);
+    }
+
+    @Override
+    public X509Certificate addEndEntityCertificate(RequestCertificateDto requestCertificateDto) {
+        return addRootCertificate(requestCertificateDto);
+    }
+
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
