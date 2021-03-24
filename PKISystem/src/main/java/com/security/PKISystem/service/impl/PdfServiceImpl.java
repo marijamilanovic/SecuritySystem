@@ -43,6 +43,10 @@ public class PdfServiceImpl implements PdfService {
         Paragraph paragraph8 = new Paragraph(chunk8);
         Chunk chunk9 = new Chunk(certificate.getValidTo().toString(),font);
         Paragraph paragraph9 = new Paragraph(chunk9);
+        Chunk chunk10 = new Chunk("Key usage:", font1);
+        Paragraph paragraph10 = new Paragraph(chunk10);
+        Chunk chunk11 = new Chunk(certificate.getKeyUsage(),font);
+        Paragraph paragraph11 = new Paragraph(chunk11);
 
 
         document.add(paragraph);
@@ -55,6 +59,8 @@ public class PdfServiceImpl implements PdfService {
         document.add(paragraph7);
         document.add(paragraph8);
         document.add(paragraph9);
+        document.add(paragraph10);
+        document.add(paragraph11);
 
         document.close();
     }

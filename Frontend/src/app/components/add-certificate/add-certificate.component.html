@@ -1,7 +1,6 @@
 <div class="page">
     <div class="form">
         <form class="ngform" style="width: 600px">
-            <div>
             <h3>Add new Certificate</h3>
             <br>
             <input type="text" placeholder="Common name" [(ngModel)]="requestCertificate.issuedToCommonName" name="commonname" style="width: 300px" required>
@@ -11,7 +10,6 @@
             <input type="text" placeholder="Organisation unit" [(ngModel)]="requestCertificate.organisationalUnit" name="organisationunit" style="width: 300px" required>
             <input type="text" placeholder="Country" [(ngModel)]="requestCertificate.country" name="country" style="width: 300px" required>
             <input type="text" placeholder="Email" [(ngModel)]="requestCertificate.email" name="email" style="width: 300px" required>
-            </div>
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
