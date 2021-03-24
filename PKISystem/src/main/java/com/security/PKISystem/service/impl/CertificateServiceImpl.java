@@ -55,11 +55,11 @@ public class CertificateServiceImpl implements CertificateService {
         isSerialNumberUnique(requestCertificateDto.getCertificateDto().getSerialNumber());
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
-        // TODO: keystore u zavisnosti od tipa sertifikata
         if(certificateType == CertificateType.INTERMEDIATE)
             keyStore = intermediateKSPath;
         else if(certificateType == CertificateType.END_ENTITY)
             keyStore = endEntityKSPath;
+
         File f = new File(keyStore);
         if(f.exists() && !f.isDirectory()) {
             keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
@@ -103,8 +103,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
-//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-//            return null;
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+            return null;
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);

@@ -17,9 +17,9 @@
                 <hr style="border-color:yellow; border-width: 2px;">
                 <br>
                 <div style="font-size: 20px;">
-                    <li *ngIf="isValid == 0">Error. Try again later.</li>
-                    <li *ngIf="isValid == 1">Certificate is valid.</li>
-                    <li *ngIf="isValid == 2">Certificate is not valid.</li>
+                    <li *ngIf="isValid == 0" style="list-style-type: none;">Error. Try again later.</li>
+                    <li *ngIf="isValid == 1" style="list-style-type: none;">Certificate is valid.</li>
+                    <li *ngIf="isValid == 2" style="list-style-type: none;">Certificate is not valid.</li>
                 </div>
                 <br>
                 <button class="btn btn-warning" style="width: 200px" (click)="checkCertificate(true)">Check another one</button>
