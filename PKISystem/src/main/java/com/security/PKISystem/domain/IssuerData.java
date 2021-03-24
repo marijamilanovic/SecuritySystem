@@ -20,7 +20,7 @@ public class IssuerData {
 		this.privateKey = privateKey;
 		this.x500name = x500name;
 	}
-	public IssuerData(PrivateKey privateKey, RequestCertificateDto certificateDto) {
+	public IssuerData(PrivateKey privateKey, RequestCertificateDto certificateDto, Long serialNumber) {
 		this.privateKey = privateKey;
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
 		builder.addRDN(BCStyle.CN, certificateDto.getIssuedToCommonName());
@@ -30,7 +30,7 @@ public class IssuerData {
 		builder.addRDN(BCStyle.OU, certificateDto.getOrganisationalUnit());
 		builder.addRDN(BCStyle.C, certificateDto.getCountry());
 		builder.addRDN(BCStyle.E, certificateDto.getEmail());
-		builder.addRDN(BCStyle.SERIALNUMBER, certificateDto.getCertificateDto().getIssuerSerial().toString());
+		builder.addRDN(BCStyle.SERIALNUMBER, serialNumber.toString());
 
 		this.x500name = builder.build();
 	}
