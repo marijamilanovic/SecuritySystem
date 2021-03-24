@@ -113,7 +113,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
         Random rand = new Random();
-        Long serial = Math.abs(rand.nextLong());
+        Long serial = Math.abs(new Long(rand.nextInt(1000000000)));
 
         Certificate certificateForDatabase = new Certificate(
                 serial,
@@ -231,6 +231,11 @@ public class CertificateServiceImpl implements CertificateService {
             certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
         }
         return certificateDtos;
+    }
+
+    @Override
+    public Certificate getCertificateBySerialNumber(Long serialNumber){
+        return certificateRepository.findCertificateBySerialNumber(serialNumber);
     }
 
     @Override

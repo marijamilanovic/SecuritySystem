@@ -33,7 +33,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
 
     @Override
     public boolean isCertificateValid(Long serialNumber, Long issuerId) {
-        Certificate certificate = certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
+        Certificate certificate = certificateService.getCertificateBySerialNumber(serialNumber);
         if (certificate != null){
             if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
                     isNotRevoked(certificate))
@@ -49,15 +49,10 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
     public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
         Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
                 requestCertificateDto.getCertificateDto().getIssuerName());
-        if (requestCertificateDto != null){
-            if(requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT && checkNewCertificateDate(requestCertificateDto)){
-                return true;
-            }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
-                return true;
-            }
-            return false;
+        if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
+            return true;
         }
-        throw new NotFoundException("Certificate not found.");
+        return false;
     }
 
     public boolean checkDate(Date validFrom, Date validTo){
@@ -85,18 +80,10 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
                     issuerCertificate.getSerialNumber().toString());
             try {
                 certificateToCheck.verify(loadPublicKey(issuerCertificate.getPublicKey()));
-            } catch(CertificateException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (NoSuchProviderException e) {
-                e.printStackTrace();
             } catch (SignatureException e) {
                 System.out.println("\nValidacija neuspesna");
                 e.printStackTrace();
-            } catch (GeneralSecurityException e) {
+            } catch(GeneralSecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -108,7 +95,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
 
 
     public boolean isNotRevoked(Certificate certificate){
-        return certificate.getState() == State.VALID || certificate.getCertificateType() == CertificateType.ROOT;
+        return certificate.getState() == State.VALID;
     }
 
     public boolean checkNewCertificateDate(RequestCertificateDto requestCertificateDto){

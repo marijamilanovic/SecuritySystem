@@ -14,6 +14,7 @@ export class ValidationCertificateComponent implements OnInit {
   isChecked: boolean = false;
   cert: any;
   certificates: any[]=[];
+  isValid: number = 0;
 
   constructor(private certificateService: CertificateService) { }
 
@@ -30,16 +31,20 @@ export class ValidationCertificateComponent implements OnInit {
 
   
   checkCertificate(check: boolean){
+    this.isValid = 11;
     if(check == true){
       this.isChecked = false;
     }else{
-      //salji zahtev
-      /*this.certificateService..subscribe((data:any[]) => {
-        this.availableMeds = data;
+      this.certificateService.checkCertificate(this.cert.serialNumber, this.cert.issuerSerial).subscribe(data => {
         console.log(data);
-        this.isChecked = true;
-        this.toastrService.info('Medicines are checked.');
-      })*/
+        if(data){
+          this.isValid = 1;
+        } else if(!data){
+          this.isValid = 2;
+        }  
+      }, error => {
+        this.isValid = 3;
+      });
       this.isChecked = true;
     }
     

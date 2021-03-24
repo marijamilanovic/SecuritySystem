@@ -5,8 +5,8 @@
             <br>
             <div>
                 <div >
-                <select name="typeSelect" [disabled]="isChecked">
-                    <option *ngFor="let c of certificates">{{c.owner}} [{{c.serialNumber}}] --- {{c.certificateType}}</option>
+                <select name="typeSelect" [disabled]="isChecked" [(ngModel)]="cert">
+                    <option *ngFor="let c of certificates" [ngValue]="c">{{c.owner}} [{{c.serialNumber}}] --- {{c.certificateType}}</option>
                 </select>
                 </div>
                 <p style="font-size: 11px; color: red;">Subject name  [serial number]  ---  certificate type</p>
@@ -15,6 +15,12 @@
             </div>
             <div *ngIf='isChecked'>
                 <hr style="border-color:yellow; border-width: 2px;">
+                <br>
+                <div style="font-size: 20px;">
+                    <li *ngIf="isValid == 0">Error. Try again later.</li>
+                    <li *ngIf="isValid == 1">Certificate is valid.</li>
+                    <li *ngIf="isValid == 2">Certificate is not valid.</li>
+                </div>
                 <br>
                 <button class="btn btn-warning" style="width: 200px" (click)="checkCertificate(true)">Check another one</button>
             </div>

@@ -23,7 +23,7 @@ export class CertificateService {
   }
 
   checkCertificate(serialNumber: any, issuerSerial: any){
-    return this.httpClient.get(CERTIFICATE_VALIDATION_PATH + '/' + serialNumber + issuerSerial);
+    return this.httpClient.get(CERTIFICATE_VALIDATION_PATH + '/' + serialNumber + '/' + issuerSerial);
   }
 
   createRootCertificate(certificate: any): any{
