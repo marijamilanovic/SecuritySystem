@@ -108,10 +108,11 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
+        String pass = "ftn";
         if(f.exists() && !f.isDirectory()) {
-            keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
+            keyStoreWriter.loadKeyStore(rootKSPath, pass.toCharArray());
         } else {
-            keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
+            keyStoreWriter.loadKeyStore(null, pass.toCharArray());
         }
 
         KeyPair keyPairSubject = generateKeyPair();

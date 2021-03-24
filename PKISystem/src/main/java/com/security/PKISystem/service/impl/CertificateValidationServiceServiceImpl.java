@@ -35,9 +35,8 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         Certificate certificate = certificateService.getCertificateBySerialNumber(serialNumber);
         if (certificate != null){
             if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
-                    isNotRevoked(certificate))
+                    isNotRevoked(certificate) && checkCertificateChain(certificate))
                 return true;
-            // todo: certificate chain, provera javnog kljuca ?
             return false;
         }
         throw new NotFoundException("Certificate not found.");
@@ -68,11 +67,9 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
             Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
                     requestCertificateDto.getCertificateDto().getIssuerName());
             KeyStoreReader keyStoreReader = new KeyStoreReader();
-            String issuerKeyStore = getCertificateKeyStor(issuerCertificate);
+            String issuerKeyStore = getCertificateKeyStore(issuerCertificate);
 
-            java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(issuerKeyStore,
-                    requestCertificateDto.getKeystoreIssuerPassword(),
-                    issuerCertificate.getSerialNumber().toString());
+            java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(issuerKeyStore, "", issuerCertificate.getSerialNumber().toString());
             try {
                 certificateToCheck.verify(loadPublicKey(issuerCertificate.getPublicKey()));
             } catch (SignatureException e) {
@@ -88,12 +85,37 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         return true;
     }
 
-    /*public boolean checkCertificateChain(Certificate certificate){
-        KeyStoreReader keyStoreReader = new KeyStoreReader();
-        String certificateKeyStore = getCertificateKeyStor(certificate);
-    }*/
+    public boolean checkCertificateChain(Certificate certificate){
+        Certificate currCertificate = certificate;
+        while(true) {
+            if(!checker(currCertificate))
+                return false;
+            if(currCertificate.getCertificateType() == CertificateType.ROOT)
+                return true;
+            currCertificate = certificateService.getCertificateBySerialNumber(currCertificate.getIssuerSerial());
+        }
+    }
 
-    public String getCertificateKeyStor(Certificate certificate){
+    public boolean checker(Certificate certificate){
+        KeyStoreReader keyStoreReader = new KeyStoreReader();
+        String certificateKeyStore = getCertificateKeyStore(certificate);
+        java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(certificateKeyStore, "ftn", certificate.getSerialNumber().toString());
+        try {
+            certificateToCheck.verify(loadPublicKey(certificate.getPublicKey()));
+        } catch (SignatureException e) {
+            System.out.println("\nValidacija neuspesna");
+            e.printStackTrace();
+        } catch(GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public String getCertificateKeyStore(Certificate certificate){
         String certificateKeyStore = "";
         if (certificate.getCertificateType() == CertificateType.ROOT){
             certificateKeyStore = rootKSPath;
