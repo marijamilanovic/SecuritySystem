@@ -81,7 +81,8 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getValidFrom(),
                 requestCertificateDto.getCertificateDto().getValidTo(),
                 requestCertificateDto.getCertificateDto().getCertificateType(),
-                State.VALID);
+                State.VALID,
+                requestCertificateDto.getCertificateDto().getKeyUsage());
         this.certificateRepository.save(certForDatabase);
 
         CertificateStatus certificateStatus = new CertificateStatus();
@@ -128,7 +129,8 @@ public class CertificateServiceImpl implements CertificateService {
                 serial,
                 requestCertificateDto.getCertificateDto().getValidFrom(),
                 requestCertificateDto.getCertificateDto().getValidTo(),
-                CertificateType.ROOT, State.VALID);
+                CertificateType.ROOT, State.VALID,
+                requestCertificateDto.getCertificateDto().getKeyUsage());
 
         this.certificateRepository.save(certificateForDatabase);
 //        certificateForDatabase.setIssuerSerial(certificateForDatabase.getIssuerSerial());
