@@ -38,7 +38,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
             if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
                     isNotRevoked(certificate))
                 return true;
-            // todo: certificate chain, provera javnog kljuca
+            // todo: certificate chain, provera javnog kljuca ?
             return false;
         }
         throw new NotFoundException("Certificate not found.");

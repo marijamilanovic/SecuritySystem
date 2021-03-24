@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 
 import { AddCertificateComponent } from './components/add-certificate/add-certificate.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -27,6 +28,7 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
     HttpClientModule,
     NgbModule,
     NgSelectModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
