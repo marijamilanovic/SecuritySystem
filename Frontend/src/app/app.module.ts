@@ -7,12 +7,12 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 
 import { AddCertificateComponent } from './components/add-certificate/add-certificate.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ValidationCertificateComponent } from './components/validation-certificate/validation-certificate.component';
 import { AllCertificatesComponent } from './components/all-certificates/all-certificates.component';
-import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,7 @@ import { FormsModule } from '@angular/forms';
     HttpClientModule,
     NgbModule,
     NgSelectModule,
-    FormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

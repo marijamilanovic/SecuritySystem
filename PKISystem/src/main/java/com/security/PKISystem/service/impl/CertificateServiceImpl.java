@@ -62,17 +62,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
 
-        //todo: ispraviti
-        List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(requestCertificateDto.getCertificateDto().getIssuerName());
-        Certificate issuerCertificate = new Certificate();
-
-        for(Certificate c: issuerCertificates){
-            CertificateStatus status = this.certificateStatusService.findCertificateStatusByCertificateId(c.getId());
-            if(status.getState().equals(State.VALID)){
-                issuerCertificate = c;
-                break;
-            }
-        }
+        Certificate issuerCertificate = certificateRepository.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(), requestCertificateDto.getCertificateDto().getIssuerName());
 
         Random rand = new Random();
         Long serial = Math.abs(rand.nextLong());
@@ -112,8 +102,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
-//        if(!isNewCertificateValid(requestCertificateDto))
-//            return null;
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+            return null;
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);

@@ -16,6 +16,7 @@ public class CertificateMapper {
         certificateDto.setSerialNumber(new Long(certificate.getSerialNumber()));
         certificateDto.setValidFrom(certificate.getValidTo());
         certificateDto.setValidTo(certificate.getValidTo());
+        certificateDto.setOwner(certificate.getOwner());
         return certificateDto;
     }
 }

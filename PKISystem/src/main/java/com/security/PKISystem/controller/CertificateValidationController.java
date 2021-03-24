@@ -12,11 +12,9 @@ public class CertificateValidationController {
     @Autowired
     private CertificateValidationService certificateValidationService;
 
-
-    // todo: ocsp
-    @GetMapping("/{serialNumber}/{issuerId}")
-    public boolean isCertificateValid(@PathVariable Long serialNumber, @PathVariable Long issuerId){
-        return certificateValidationService.isCertificateValid(serialNumber, issuerId);
+    @GetMapping("/{serialNumber}/{issuerSerial}")
+    public boolean isCertificateValid(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
+        return certificateValidationService.isCertificateValid(serialNumber, issuerSerial);
     }
 
 
