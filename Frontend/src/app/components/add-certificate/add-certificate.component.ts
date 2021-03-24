@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
 import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
@@ -33,8 +34,10 @@ export class AddCertificateComponent implements OnInit {
   toDate: NgbDate | null = null;
   types: any[]=[];
   issuers: any[]=[];
+  certificateDto: any;
+  requestCertificate: any;
 
-  constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService) { 
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
@@ -74,7 +77,11 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
-    
+    this.certificateService.createRootCertificate(this.requestCertificate).subscribe((response: any) =>{
+     this.toastrService.success("Added certificate");
+    }, (err: any)=>{
+      this.toastrService.error("Error while create certificate "+err);
+    })
   }
 
 }

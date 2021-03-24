@@ -12,6 +12,7 @@ import { AddCertificateComponent } from './components/add-certificate/add-certif
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ValidationCertificateComponent } from './components/validation-certificate/validation-certificate.component';
 import { AllCertificatesComponent } from './components/all-certificates/all-certificates.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,7 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
     AddCertificateComponent,
     NavbarComponent,
     ValidationCertificateComponent,
-    AllCertificatesComponent
+    AllCertificatesComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,6 +28,7 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
     HttpClientModule,
     NgbModule,
     NgSelectModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

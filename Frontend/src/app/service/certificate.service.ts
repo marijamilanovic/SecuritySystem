@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CERTIFICATE_TYPES_PATH } from '../util/paths';
+import { CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CERTIFICATE_TYPES_PATH, ROOT_PATH } from '../util/paths';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,10 @@ export class CertificateService {
 
   getAllIssuers():any{
     return this.httpClient.get(CERTIFICATE_ISSUERS_PATH);
+  }
+
+  createRootCertificate(certificate: any): any{
+    return this.httpClient.post(ROOT_PATH, certificate);
   }
 
 }

@@ -1,16 +1,17 @@
 <div class="page">
     <div class="form">
         <form class="ngform" style="width: 600px">
+            <div>
             <h3>Add new Certificate</h3>
             <br>
-            <input type="text" placeholder="Common name" name="commonname" style="width: 300px" required>
-            <input type="text" placeholder="Surname" name="name" style="width: 300px" required>
-            <input type="text" placeholder="Given name" name="givenname" style="width: 300px" required>
-            <input type="text" placeholder="Name of organisation" name="organisation" style="width: 300px" required>
-            <input type="text" placeholder="Organisation unit" name="organisationunit" style="width: 300px" required>
-            <input type="text" placeholder="Country" name="country" style="width: 300px" required>
-            <input type="text" placeholder="Email" name="email" style="width: 300px" required>
-
+            <input type="text" placeholder="Common name" [(ngModel)]="requestCertificate.issuedToCommonName" name="commonname" style="width: 300px" required>
+            <input type="text" placeholder="Surname" [(ngModel)]="requestCertificate.surname" name="name" style="width: 300px" required>
+            <input type="text" placeholder="Given name" [(ngModel)]="requestCertificate.givenName" name="givenname" style="width: 300px" required>
+            <input type="text" placeholder="Name of organisation" [(ngModel)]="requestCertificate.organisation" name="organisation" style="width: 300px" required>
+            <input type="text" placeholder="Organisation unit" [(ngModel)]="requestCertificate.organisationalUnit" name="organisationunit" style="width: 300px" required>
+            <input type="text" placeholder="Country" [(ngModel)]="requestCertificate.country" name="country" style="width: 300px" required>
+            <input type="text" placeholder="Email" [(ngModel)]="requestCertificate.email" name="email" style="width: 300px" required>
+            </div>
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
@@ -32,7 +33,7 @@
             <br>
             <br>
             <div> 
-                <h5>Certificate type</h5><select name="typeSelect" >
+                <h5>Certificate type</h5><select name="typeSelect" [(ngModel)]="requestCertificate.certificateDto.certificateType" >
                     <option *ngFor="let type of types">{{type}}</option>
                 </select>
             </div>
