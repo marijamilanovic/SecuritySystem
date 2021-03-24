@@ -11,7 +11,6 @@ import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
-import com.security.PKISystem.service.CertificateStatusService;
 import com.security.PKISystem.service.CertificateValidationService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.nio.file.FileAlreadyExistsException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -36,8 +34,6 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Autowired
     private CertificateRepository certificateRepository;
-    @Autowired
-    private CertificateStatusService certificateStatusService;
     @Autowired
     private CertificateValidationService certificateValidationService;
 
@@ -64,9 +60,12 @@ public class CertificateServiceImpl implements CertificateService {
             keyStore = intermediateKSPath;
         else if(certificateType == CertificateType.END_ENTITY)
             keyStore = endEntityKSPath;
-
-        keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
-
+        File f = new File(keyStore);
+        if(f.exists() && !f.isDirectory()) {
+            keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
+        }else{
+            keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
+        }
         KeyPair keyPairSubject = generateKeyPair();
 
         Certificate issuerCertificate = certificateRepository.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(), requestCertificateDto.getCertificateDto().getIssuerName());
@@ -86,11 +85,6 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getKeyUsage());
         this.certificateRepository.save(certForDatabase);
 
-        CertificateStatus certificateStatus = new CertificateStatus();
-        certificateStatus.setCertificateId(certForDatabase.getId());
-        certificateStatus.setState(State.VALID);
-        this.certificateStatusService.saveCertificateStatus(certificateStatus);
-
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
         IssuerData issuerData = keyStoreReader.readIssuerFromStore(requestCertificateDto.getKeystoreName(),
@@ -102,21 +96,23 @@ public class CertificateServiceImpl implements CertificateService {
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
 
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
-        keyStoreWriter.saveKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+        keyStoreWriter.saveKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
 
         return certificate;
     }
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
-        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return null;
+//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+//            return null;
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
-        if(f.exists() && !f.isDirectory())
+        if(f.exists() && !f.isDirectory()) {
             keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
-        keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
+        } else {
+            keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
+        }
 
         KeyPair keyPairSubject = generateKeyPair();
         Random rand = new Random();
@@ -132,15 +128,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getValidTo(),
                 CertificateType.ROOT, State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
-
         this.certificateRepository.save(certificateForDatabase);
-//        certificateForDatabase.setIssuerSerial(certificateForDatabase.getIssuerSerial());
-//        this.certificateRepository.save(certificateForDatabase);
-
-        CertificateStatus certificateStatus = new CertificateStatus();
-        certificateStatus.setCertificateId(certificateForDatabase.getId());
-        certificateStatus.setState(State.VALID);
-        this.certificateStatusService.saveCertificateStatus(certificateStatus);
 
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
         IssuerData issuerData = new IssuerData(keyPairSubject.getPrivate(), requestCertificateDto, serial);
@@ -224,7 +212,6 @@ public class CertificateServiceImpl implements CertificateService {
     private void revokeCertificate(Long serialNumber, Long issuerSerial){
         Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerSerial);
         certificate.setState(State.REVOKED);
-        certificateStatusService.revokeCertificate(serialNumber);
         certificateRepository.save(certificate);
     }
 
