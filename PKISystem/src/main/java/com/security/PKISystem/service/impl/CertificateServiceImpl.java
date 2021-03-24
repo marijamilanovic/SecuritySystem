@@ -50,6 +50,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
+        String keyStore = "";
+        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
 
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
@@ -58,14 +60,19 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
-        keyStoreWriter.loadKeyStore(requestCertificateDto.getKeystoreName()+".jks", requestCertificateDto.getKeystorePassword().toCharArray());
+        if(certificateType == CertificateType.INTERMEDIATE)
+            keyStore = intermediateKSPath;
+        else if(certificateType == CertificateType.END_ENTITY)
+            keyStore = endEntityKSPath;
+
+        keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
 
         KeyPair keyPairSubject = generateKeyPair();
 
         Certificate issuerCertificate = certificateRepository.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(), requestCertificateDto.getCertificateDto().getIssuerName());
 
         Random rand = new Random();
-        Long serial = Math.abs(rand.nextLong());
+        Long serial = Math.abs(new Long(rand.nextInt(1000000000)));
         Certificate certForDatabase = new Certificate(
                 serial,
                 Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
