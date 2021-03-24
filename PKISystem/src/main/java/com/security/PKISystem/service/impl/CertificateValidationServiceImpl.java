@@ -19,7 +19,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Service
-public class CertificateValidationServiceServiceImpl implements CertificateValidationService {
+public class CertificateValidationServiceImpl implements CertificateValidationService {
     @Value("${rootKSPath}")
     private String rootKSPath;
     @Value("${intermediateKSPath}")

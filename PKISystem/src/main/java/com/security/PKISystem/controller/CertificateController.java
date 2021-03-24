@@ -72,4 +72,9 @@ public class CertificateController {
     public void revokeCertificate(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
         certificateService.revokeCertificateChain(serialNumber, issuerSerial);
     }
+
+    @GetMapping("/chain/{serialNumber}")
+    public List<CertificateDto> getCertificateChain(@PathVariable Long serialNumber){
+        return certificateService.getCertificateChain(serialNumber);
+    }
 }

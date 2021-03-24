@@ -40,4 +40,6 @@ public interface CertificateService {
     List<String> getCertificateTypes();
 
     Certificate getCertificateBySerialNumber(Long serialNumber);
+
+    List<CertificateDto> getCertificateChain(Long serialNumber);
 }
