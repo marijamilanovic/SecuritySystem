@@ -6,6 +6,7 @@ import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
+import com.security.PKISystem.exception.AlreadyExistsException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.file.FileAlreadyExistsException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -51,6 +53,8 @@ public class CertificateServiceImpl implements CertificateService {
 
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
+
+        isSerialNumberUnique(requestCertificateDto.getCertificateDto().getSerialNumber());
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
@@ -174,6 +178,13 @@ public class CertificateServiceImpl implements CertificateService {
         for(CertificateType ct: CertificateType.values())
             types.add(ct.toString());
         return types;
+    }
+
+    @Override
+    public void isSerialNumberUnique(Long serialNumber){
+        Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
+        if(certificate != null)
+            throw new AlreadyExistsException("Serial number must be unique");
     }
 
     @Override

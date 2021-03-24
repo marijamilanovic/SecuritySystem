@@ -35,4 +35,5 @@ public interface CertificateService {
 
     List<String> getCertificateTypes();
 
+    void isSerialNumberUnique(Long serialNumber);
 }

@@ -14,7 +14,7 @@ public class Certificate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long serialNumber;
     @Column(length=1000)
     private String publicKey;
