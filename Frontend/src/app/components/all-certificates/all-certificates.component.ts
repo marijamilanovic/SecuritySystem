@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
@@ -26,6 +27,9 @@ export class AllCertificatesComponent implements OnInit {
   }
 
   download(i: any){
+    this.certificateService.generatePdf(this.certificates[i].id).subscribe((response: any) =>{
+      alert("Generated pdf");
+    })
     this.seeDetails = false;
   }
 

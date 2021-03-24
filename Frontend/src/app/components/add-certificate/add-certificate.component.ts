@@ -37,7 +37,7 @@ export class AddCertificateComponent implements OnInit {
   certificateDto: any;
   requestCertificate: any;
 
-  constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService) { 
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
@@ -78,9 +78,9 @@ export class AddCertificateComponent implements OnInit {
 
   addNewCertificate(){
     this.certificateService.createRootCertificate(this.requestCertificate).subscribe((response: any) =>{
-     this.toastrService.success("Added certificate");
+     alert("Added certificate");
     }, (err: any)=>{
-      this.toastrService.error("Error while create certificate "+err);
+      alert("Error while create certificate "+err);
     })
   }
 

@@ -8,3 +8,6 @@ export const CERTIFICATE_VALIDATION_PATH = BACKEND_PATH + '/validation';
 
 export const ROOT_PATH = CERTIFICATE_PATH + '/root';
 
+export const PDF_PATH = BACKEND_PATH + '/pdf';
+
+
