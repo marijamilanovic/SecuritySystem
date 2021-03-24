@@ -1,13 +1,12 @@
 package com.security.PKISystem.domain;
 
+import com.security.PKISystem.domain.dto.RequestCertificateDto;
+import com.security.PKISystem.domain.mapper.CertificateMapper;
+import org.bouncycastle.asn1.x500.X500Name;
+
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Date;
-
-import com.security.PKISystem.domain.dto.RequestCertificateDto;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.X500NameBuilder;
-import org.bouncycastle.asn1.x500.style.BCStyle;
 
 public class SubjectData {
 
@@ -17,26 +16,13 @@ public class SubjectData {
 	private Date startDate;
 	private Date endDate;
 
-	public SubjectData() {
-
-	}
+	public SubjectData() {}
 
 	public SubjectData(KeyPair keyPair, RequestCertificateDto certificateDto, Long serialNumber) {
 		//TODO: Napraviti mapper
 		this.publicKey = keyPair.getPublic();
-		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-		builder.addRDN(BCStyle.CN, certificateDto.getIssuedToCommonName());
-		builder.addRDN(BCStyle.SURNAME, certificateDto.getSurname());
-		builder.addRDN(BCStyle.GIVENNAME, certificateDto.getGivenName());
-		builder.addRDN(BCStyle.O, certificateDto.getOrganisation());
-		builder.addRDN(BCStyle.OU, certificateDto.getOrganisationalUnit());
-		builder.addRDN(BCStyle.C, certificateDto.getCountry());
-		builder.addRDN(BCStyle.E, certificateDto.getEmail());
-		builder.addRDN(BCStyle.SERIALNUMBER, serialNumber.toString());
-		this.x500name = builder.build();
+		this.x500name = CertificateMapper.mapCertificateDtoToX500name(certificateDto, serialNumber);
 		this.serialNumber = serialNumber.toString();
-
-
 		this.startDate = certificateDto.getCertificateDto().getValidFrom();
 		this.endDate = certificateDto.getCertificateDto().getValidTo();
 	}

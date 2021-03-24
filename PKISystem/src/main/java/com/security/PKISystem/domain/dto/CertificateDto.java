@@ -1,8 +1,11 @@
 package com.security.PKISystem.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.security.PKISystem.domain.CertificateType;
 import com.security.PKISystem.domain.State;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 public class CertificateDto {
@@ -12,7 +15,11 @@ public class CertificateDto {
     private String owner;
     private String issuerName;
     private Long issuerSerial;
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
     private Date validFrom;
+    @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
     private Date validTo;
     private CertificateType certificateType;
     private State state;

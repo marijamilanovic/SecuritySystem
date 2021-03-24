@@ -35,8 +35,8 @@ export class AddCertificateComponent implements OnInit {
   toDate: NgbDate | null = null;
   types: any[]=[];
   issuers: any[]=[];
-  certificateDto: any;
-  requestCertificate: any;
+  certificateDto: any = {certificateType: ''}
+  requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto};
 
   constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
@@ -78,15 +78,19 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
-    if(this.requestCertificate.certificateDto.certificateType = 'ROOT'){
+
+    this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day;
+    this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day;
+    
+    if(this.requestCertificate.certificateDto.certificateType == 'ROOT'){
       this.createRoot();
     }
 
-    if(this.requestCertificate.certificateDto.certificateType = 'INTERMEDIATE'){
+    if(this.requestCertificate.certificateDto.certificateType == 'INTERMEDIATE'){
       this.createIntermediate();
     }
 
-    if(this.requestCertificate.certificateDto.certificateType = 'END_ENTITY'){
+    if(this.requestCertificate.certificateDto.certificateType == 'END_ENTITY'){
       this.createEndEntity();
     }
     

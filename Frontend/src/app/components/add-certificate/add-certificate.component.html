@@ -3,13 +3,13 @@
         <form class="ngform" style="width: 600px">
             <h3>Add new Certificate</h3>
             <br>
-            <input type="text" placeholder="Common name" [(ngModel)]="requestCertificate.issuedToCommonName" name="commonname" style="width: 300px" required>
-            <input type="text" placeholder="Surname" [(ngModel)]="requestCertificate.surname" name="name" style="width: 300px" required>
-            <input type="text" placeholder="Given name" [(ngModel)]="requestCertificate.givenName" name="givenname" style="width: 300px" required>
-            <input type="text" placeholder="Name of organisation" [(ngModel)]="requestCertificate.organisation" name="organisation" style="width: 300px" required>
-            <input type="text" placeholder="Organisation unit" [(ngModel)]="requestCertificate.organisationalUnit" name="organisationunit" style="width: 300px" required>
-            <input type="text" placeholder="Country" [(ngModel)]="requestCertificate.country" name="country" style="width: 300px" required>
-            <input type="text" placeholder="Email" [(ngModel)]="requestCertificate.email" name="email" style="width: 300px" required>
+            <input type="text" placeholder="Common name" [(ngModel)]="requestCertificate.issuedToCommonName" id="commonname" name="commonname" style="width: 300px" required>
+            <input type="text" placeholder="Surname" [(ngModel)]="requestCertificate.surname" id="surname" name="name" style="width: 300px" required>
+            <input type="text" placeholder="Given name" [(ngModel)]="requestCertificate.givenName" id="givenName" name="givenname" style="width: 300px" required>
+            <input type="text" placeholder="Name of organisation" [(ngModel)]="requestCertificate.organisation" id="organisation" name="organisation" style="width: 300px" required>
+            <input type="text" placeholder="Organisation unit" [(ngModel)]="requestCertificate.organisationalUnit" id="unit" name="organisationunit" style="width: 300px" required>
+            <input type="text" placeholder="Country" [(ngModel)]="requestCertificate.country" name="country" id="country" style="width: 300px" required>
+            <input type="text" placeholder="Email" [(ngModel)]="requestCertificate.email" name="email" id="email" style="width: 300px" required>
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
@@ -31,7 +31,7 @@
             <br>
             <br>
             <div> 
-                <h5>Certificate type</h5><select name="typeSelect" [(ngModel)]="requestCertificate.certificateDto.certificateType" >
+                <h5>Certificate type</h5><select name="typeSelect" [(ngModel)]="requestCertificate.certificateDto.certificateType" id="type" >
                     <option value="ROOT">root</option>
                     <option value="INTERMEDIATE">intermediate</option>
                     <option value="END_ENTITY">end entity</option>
@@ -43,7 +43,7 @@
             <br>
             <br>
             <div> 
-                <h5>Issuer</h5><select name="issuerSelect">
+                <h5>Issuer</h5><select name="issuerSelect" id="issuer">
                     <option *ngFor="let issuer of issuers">{{issuer.owner}} {{issuer.serialNumber}}</option>
                 </select>
             </div>
@@ -54,7 +54,7 @@
             <input type="password" [(ngModel)]="requestCertificate.keystorePassword" placeholder="KeyStore password" name="password" style="width: 300px" required>
 
             <br><br>
-            <button class="btn btn-warning" style="width: 200px">Save</button>
+            <button class="btn btn-warning" style="width: 200px" (click) = "addNewCertificate()">Save</button>
         </form>
     </div>
 </div>
