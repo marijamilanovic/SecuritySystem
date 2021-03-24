@@ -14,7 +14,7 @@ public class Certificate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long serialNumber;
     @Column(length=1000)
     private String publicKey;
@@ -24,6 +24,8 @@ public class Certificate implements Serializable {
     private String issuerName;
     @Column
     private Long issuerSerial;
+    @Column
+    private String keyUsage;
     @Column
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
@@ -54,7 +56,7 @@ public class Certificate implements Serializable {
     }
 
     public Certificate(Long serialNumber, String publicKey, String issuerName, String owner,
-                       Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+                       Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state, String keyUsage) {
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
         this.issuerName = issuerName;
@@ -64,6 +66,7 @@ public class Certificate implements Serializable {
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
+        this.keyUsage = keyUsage;
     }
 
     public Long getSerialNumber() {
@@ -144,5 +147,13 @@ public class Certificate implements Serializable {
 
     public void setOwner(String owner) {
         this.owner = owner;
+    }
+
+    public String getKeyUsage() {
+        return keyUsage;
+    }
+
+    public void setKeyUsage(String keyUsage) {
+        this.keyUsage = keyUsage;
     }
 }

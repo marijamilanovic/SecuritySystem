@@ -16,10 +16,11 @@ public class CertificateDto {
     private Date validTo;
     private CertificateType certificateType;
     private State state;
+    private String keyUsage;
 
     public CertificateDto(){}
 
-    public CertificateDto(Long id, Long serialNumber, String publicKey, String owner, String issuerName, Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state) {
+    public CertificateDto(Long id, Long serialNumber, String publicKey, String owner, String issuerName, Long issuerSerial, Date validFrom, Date validTo, CertificateType certificateType, State state, String keyUsage) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.publicKey = publicKey;
@@ -30,6 +31,7 @@ public class CertificateDto {
         this.validTo = validTo;
         this.certificateType = certificateType;
         this.state = state;
+        this.keyUsage = keyUsage;
     }
 
     public String getOwner() {
@@ -111,5 +113,13 @@ public class CertificateDto {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public String getKeyUsage() {
+        return keyUsage;
+    }
+
+    public void setKeyUsage(String keyUsage) {
+        this.keyUsage = keyUsage;
     }
 }

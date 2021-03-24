@@ -20,7 +20,7 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
     AddCertificateComponent,
     NavbarComponent,
     ValidationCertificateComponent,
-    AllCertificatesComponent
+    AllCertificatesComponent,
   ],
   imports: [
     BrowserModule,
