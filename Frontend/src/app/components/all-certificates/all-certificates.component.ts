@@ -9,6 +9,8 @@ import { CertificateService } from 'src/app/service/certificate.service';
 export class AllCertificatesComponent implements OnInit {
 
   certificates: any;
+  publicKey: any;
+  seeDetails: boolean = false;
 
   constructor(private certificateService: CertificateService) { }
 
@@ -18,8 +20,17 @@ export class AllCertificatesComponent implements OnInit {
     });
   }
 
+  details(i: any){
+    this.publicKey = this.certificates[i].publicKey;
+    this.seeDetails = true;
+  }
+
   download(i: any){
-    
+    this.seeDetails = false;
+  }
+
+  cancel(){
+    this.seeDetails = false;
   }
 
 }
