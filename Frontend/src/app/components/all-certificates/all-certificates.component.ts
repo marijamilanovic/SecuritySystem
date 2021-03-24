@@ -37,4 +37,8 @@ export class AllCertificatesComponent implements OnInit {
     this.seeDetails = false;
   }
 
+  revoke(i: any){
+    // uraditi
+  }
+
 }

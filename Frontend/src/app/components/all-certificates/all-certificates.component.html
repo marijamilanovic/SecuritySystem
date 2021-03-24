@@ -16,6 +16,7 @@
         <td>{{c.issuerSerial}}</td>
         <td>{{c.validFrom}}  -  {{c.validTo}}</td>
         <td>{{c.certificateType}}</td>
+        <td><button class="btn btn-light" (click)="revoke(i)">❌</button></td>
         <td><button class="btn btn-secondary" (click)="details(i)">Details</button></td>
         <td><button class="btn btn-info" (click)="download(i)">Generate PDF</button></td>
       </tr>
