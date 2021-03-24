@@ -44,6 +44,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         throw new NotFoundException("Certificate not found.");
     }
 
+    // TODO: treba provera revocationa za ceo lanac
     @Override
     public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
         Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
@@ -51,10 +52,9 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         if (requestCertificateDto != null){
             if(requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT && checkNewCertificateDate(requestCertificateDto)){
                 return true;
-            }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate)){
+            }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
                 return true;
             }
-            // todo: certificate chain, provera javnog kljuca
             return false;
         }
         throw new NotFoundException("Certificate not found.");
@@ -66,7 +66,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
     }
 
 
-    public Boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
+    public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         if(newCertificateType != CertificateType.ROOT){
             Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
@@ -78,7 +78,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
             }else if(issuerCertificate.getCertificateType() == CertificateType.INTERMEDIATE){
                 issuerKeyStore = intermediateKSPath;
             }else{
-                return null;
+                return false;
             }
             java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(issuerKeyStore,
                     requestCertificateDto.getKeystoreIssuerPassword(),

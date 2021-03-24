@@ -48,14 +48,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-        //TODO: Proveriti userove sertifikate
 
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
-
-        /*if(certificateValidationService.checkNewCertificateChain(requestCertificateDto))
-            return null;        // treba zavrsiti*/
-
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
