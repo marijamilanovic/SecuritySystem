@@ -1,6 +1,6 @@
 package com.security.PKISystem.domain;
 
-import com.security.PKISystem.dto.RequestCertificateDto;
+import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;

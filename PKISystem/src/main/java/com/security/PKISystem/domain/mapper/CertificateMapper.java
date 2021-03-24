@@ -1,9 +1,7 @@
 package com.security.PKISystem.domain.mapper;
 
 import com.security.PKISystem.domain.Certificate;
-import com.security.PKISystem.dto.CertificateDto;
-
-import java.math.BigInteger;
+import com.security.PKISystem.domain.dto.CertificateDto;
 
 public class CertificateMapper {
 

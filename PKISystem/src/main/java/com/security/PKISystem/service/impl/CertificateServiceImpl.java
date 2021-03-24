@@ -4,14 +4,14 @@ import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
-import com.security.PKISystem.dto.CertificateDto;
-import com.security.PKISystem.dto.RequestCertificateDto;
-import com.security.PKISystem.exception.NotFoundException;
+import com.security.PKISystem.domain.dto.CertificateDto;
+import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateStatusService;
+import com.security.PKISystem.service.CertificateValidationService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +36,8 @@ public class CertificateServiceImpl implements CertificateService {
     private CertificateRepository certificateRepository;
     @Autowired
     private CertificateStatusService certificateStatusService;
+    @Autowired
+    private CertificateValidationService certificateValidationService;
 
     public CertificateServiceImpl(){Security.addProvider(new BouncyCastleProvider());}
 
@@ -46,11 +48,14 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-
         //TODO: Proveriti userove sertifikate
 
-        if(!isNewCertificateValid(requestCertificateDto))
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
+
+        /*if(certificateValidationService.checkNewCertificateChain(requestCertificateDto))
+            return null;        // treba zavrsiti*/
+
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
@@ -58,6 +63,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
 
+        //todo: ispraviti
         List<Certificate> issuerCertificates = this.certificateRepository.findCertificateByIssuerName(requestCertificateDto.getCertificateDto().getIssuerName());
         Certificate issuerCertificate = new Certificate();
 
@@ -150,66 +156,6 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-
-    // VALIDATION
-    @Override
-    public boolean isCertificateValid(Long serialNumber, Long issuerId) {
-        Certificate certificate = getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-        if (certificate != null){
-            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
-                    isNotRevoked(certificate))
-                return true;
-            // todo: certificate chain, provera javnog kljuca
-            return false;
-        }
-        throw new NotFoundException("Certificate not found.");
-    }
-
-    public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
-        Certificate issuerCertificate = findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
-                requestCertificateDto.getCertificateDto().getIssuerName());
-        if (requestCertificateDto != null){
-            if(requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT && checkNewCertificateDate(requestCertificateDto)){
-                    return true;
-            }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate)){
-                    return true;
-            }
-            // todo: certificate chain, provera javnog kljuca
-            return false;
-        }
-        throw new NotFoundException("Certificate not found.");
-    }
-
-    public boolean checkDate(Date validFrom, Date validTo){
-        long current = new Date().getTime();
-        return current >= validFrom.getTime() && current <= validTo.getTime();
-    }
-
-    public boolean checkCertificateChain(){
-        return true;
-    }
-
-    // todo: ocsp
-    public boolean isNotRevoked(Certificate certificate){
-        return certificate.getState() == State.VALID || certificate.getCertificateType() == CertificateType.ROOT;
-    }
-
-    public boolean checkNewCertificateDate(RequestCertificateDto requestCertificateDto){
-        Date validFrom = requestCertificateDto.getCertificateDto().getValidFrom();
-        Date validTo = requestCertificateDto.getCertificateDto().getValidTo();
-        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
-        Certificate issuerCertificate = findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
-                                                                                requestCertificateDto.getCertificateDto().getIssuerName());
-        if(checkDate(validFrom, validTo) && certificateType == CertificateType.ROOT){
-            return true;
-        }else if(checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
-                validTo.before(issuerCertificate.getValidTo())){
-            return true;
-        }
-        return false;
-    }
-
-    ///////
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {

@@ -2,8 +2,8 @@ package com.security.PKISystem.service;
 
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.CertificateType;
-import com.security.PKISystem.dto.CertificateDto;
-import com.security.PKISystem.dto.RequestCertificateDto;
+import com.security.PKISystem.domain.dto.CertificateDto;
+import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import org.springframework.stereotype.Service;
 
 import java.security.cert.X509Certificate;
@@ -31,9 +31,8 @@ public interface CertificateService {
 
     void revokeCertificateChain(Long serialNumber, Long issuerSerial);
 
-    boolean isCertificateValid(Long serialNumber, Long issuerId);
-
     List<String> getStates();
 
     List<String> getCertificateTypes();
+
 }

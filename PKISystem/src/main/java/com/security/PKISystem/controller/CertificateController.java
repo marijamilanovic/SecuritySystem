@@ -1,8 +1,8 @@
 package com.security.PKISystem.controller;
 
 import com.security.PKISystem.domain.Certificate;
-import com.security.PKISystem.dto.CertificateDto;
-import com.security.PKISystem.dto.RequestCertificateDto;
+import com.security.PKISystem.domain.dto.CertificateDto;
+import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,15 +26,15 @@ public class CertificateController {
         return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+        this.certificateService.addCertificate(requestCertificateDto);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{serialNumber}/{issuerId}")
     public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
         return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-    }
-
-    // todo: ocsp
-    @GetMapping("/valid/{serialNumber}/{issuerId}")
-    public boolean isCertificateValid(@PathVariable Long serialNumber, @PathVariable Long issuerId){
-        return certificateService.isCertificateValid(serialNumber, issuerId);
     }
 
     @GetMapping("/issuers")
@@ -52,11 +52,6 @@ public class CertificateController {
         return certificateService.getCertificateTypes();
     }
 
-    @PostMapping
-    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
-        this.certificateService.addCertificate(requestCertificateDto);
-        return ResponseEntity.ok().build();
-    }
 
     @PostMapping("/root")
     public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){

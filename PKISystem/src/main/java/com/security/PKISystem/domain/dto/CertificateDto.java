@@ -1,4 +1,4 @@
-package com.security.PKISystem.dto;
+package com.security.PKISystem.domain.dto;
 
 import com.security.PKISystem.domain.CertificateType;
 import com.security.PKISystem.domain.State;
