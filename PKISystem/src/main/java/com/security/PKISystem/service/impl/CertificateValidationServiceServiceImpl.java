@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
@@ -44,12 +43,14 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         throw new NotFoundException("Certificate not found.");
     }
 
-    // TODO: treba provera revocationa za ceo lanac
+
     @Override
     public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
         Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
                 requestCertificateDto.getCertificateDto().getIssuerName());
-        if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
+        if(checkNewCertificateDate(requestCertificateDto) && requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT){
+            return true;
+        }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
             return true;
         }
         return false;
@@ -57,9 +58,9 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
 
     public boolean checkDate(Date validFrom, Date validTo){
         long current = new Date().getTime();
-        return current >= validFrom.getTime() && current <= validTo.getTime();
+        return validFrom.getTime() >= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
     }
-
+    
 
     public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
@@ -67,14 +68,8 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
             Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
                     requestCertificateDto.getCertificateDto().getIssuerName());
             KeyStoreReader keyStoreReader = new KeyStoreReader();
-            String issuerKeyStore;
-            if (issuerCertificate.getCertificateType() == CertificateType.ROOT){
-                issuerKeyStore = rootKSPath;
-            }else if(issuerCertificate.getCertificateType() == CertificateType.INTERMEDIATE){
-                issuerKeyStore = intermediateKSPath;
-            }else{
-                return false;
-            }
+            String issuerKeyStore = getCertificateKeyStor(issuerCertificate);
+
             java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(issuerKeyStore,
                     requestCertificateDto.getKeystoreIssuerPassword(),
                     issuerCertificate.getSerialNumber().toString());
@@ -93,6 +88,23 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         return true;
     }
 
+    /*public boolean checkCertificateChain(Certificate certificate){
+        KeyStoreReader keyStoreReader = new KeyStoreReader();
+        String certificateKeyStore = getCertificateKeyStor(certificate);
+    }*/
+
+    public String getCertificateKeyStor(Certificate certificate){
+        String certificateKeyStore = "";
+        if (certificate.getCertificateType() == CertificateType.ROOT){
+            certificateKeyStore = rootKSPath;
+        }else if(certificate.getCertificateType() == CertificateType.INTERMEDIATE){
+            certificateKeyStore = intermediateKSPath;
+        }else if(certificate.getCertificateType() == CertificateType.END_ENTITY){
+            certificateKeyStore = endEntityKSPath;
+        }
+        return certificateKeyStore;
+    }
+
 
     public boolean isNotRevoked(Certificate certificate){
         return certificate.getState() == State.VALID;
@@ -102,8 +114,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
         Date validFrom = requestCertificateDto.getCertificateDto().getValidFrom();
         Date validTo = requestCertificateDto.getCertificateDto().getValidTo();
         CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
-        Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
-                                                                                                    requestCertificateDto.getCertificateDto().getIssuerName());
+        Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
         if(checkDate(validFrom, validTo) && certificateType == CertificateType.ROOT){
             return true;
         }else if(checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
