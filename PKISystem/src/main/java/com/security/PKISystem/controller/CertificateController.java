@@ -26,12 +26,6 @@ public class CertificateController {
         return certificateService.findAll();
     }
 
-    @PostMapping
-    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
-        this.certificateService.addCertificate(requestCertificateDto);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/{serialNumber}/{issuerId}")
     public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
         return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
@@ -58,6 +52,11 @@ public class CertificateController {
         return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+        return new ResponseEntity(certificateService.addCertificate(requestCertificateDto), HttpStatus.OK);
+    }
+
     @PostMapping("/intermediate")
     public ResponseEntity<X509Certificate> generateIntermediateCertificate(@RequestBody RequestCertificateDto certificate){
         return new ResponseEntity(certificateService.addIntermediateCertificate(certificate), HttpStatus.OK);
@@ -68,8 +67,8 @@ public class CertificateController {
         return new ResponseEntity(certificateService.addEndEntityCertificate(certificate), HttpStatus.OK);
     }
 
-    @DeleteMapping("/revoke/{serialNumber}/{issuerSerial}")
-    public void revokeCertificate(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
-        certificateService.revokeCertificateChain(serialNumber, issuerSerial);
+    @DeleteMapping("/revoke/{serialNumber}")
+    public void revokeCertificate(@PathVariable Long serialNumber){
+        certificateService.revokeCertificateChain(serialNumber);
     }
 }

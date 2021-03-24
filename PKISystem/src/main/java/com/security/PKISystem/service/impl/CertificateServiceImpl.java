@@ -3,10 +3,9 @@ package com.security.PKISystem.service.impl;
 import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
-import com.security.PKISystem.domain.mapper.CertificateMapper;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
-import com.security.PKISystem.exception.AlreadyExistsException;
+import com.security.PKISystem.domain.mapper.CertificateMapper;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -20,7 +19,10 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Random;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -46,8 +48,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return null;
+//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+//            return null;
 
         String keyStore = "";
         CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
@@ -82,8 +84,9 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
-        IssuerData issuerData = keyStoreReader.readIssuerFromStore(requestCertificateDto.getKeystoreName(),
-                serial.toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
+        // TODO: Provera da li je issuer root ili intermediate i postavljanje putanje
+        IssuerData issuerData = keyStoreReader.readIssuerFromStore(rootKSPath,
+                requestCertificateDto.getCertificateDto().getIssuerSerial().toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
                 requestCertificateDto.getKeystorePassword().toCharArray());
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
 
@@ -98,8 +101,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
-        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return null;
+//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+//            return null;
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
@@ -189,17 +192,19 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public void revokeCertificateChain(Long serialNumber, Long issuerSerial) {
-        revokeCertificate(serialNumber, issuerSerial);
-        if(certificateRepository.findCertificateById(serialNumber).getCertificateType() == CertificateType.END_ENTITY)
+    public void revokeCertificateChain(Long serialNumber) {
+        revokeCertificate(serialNumber);
+        if(certificateRepository.findCertificateBySerialNumber(serialNumber).getCertificateType() == CertificateType.END_ENTITY)
             return;
         for(Certificate c : certificateRepository.findCertificateByIssuerSerial(serialNumber)){
-            revokeCertificateChain(c.getId(), c.getIssuerSerial());
+            if(c.getSerialNumber().equals(c.getIssuerSerial()))
+                continue;
+            revokeCertificateChain(c.getSerialNumber());
         }
     }
 
-    private void revokeCertificate(Long serialNumber, Long issuerSerial){
-        Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerSerial);
+    private void revokeCertificate(Long serialNumber){
+        Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
         certificate.setState(State.REVOKED);
         certificateRepository.save(certificate);
     }
