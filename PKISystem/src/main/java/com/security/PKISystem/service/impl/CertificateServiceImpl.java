@@ -46,13 +46,11 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-        String keyStore = "";
-        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
-
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
 
-        isSerialNumberUnique(requestCertificateDto.getCertificateDto().getSerialNumber());
+        String keyStore = "";
+        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         // TODO: keystore u zavisnosti od tipa sertifikata
@@ -66,12 +64,9 @@ public class CertificateServiceImpl implements CertificateService {
         }else{
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
+
         KeyPair keyPairSubject = generateKeyPair();
-
-        Certificate issuerCertificate = certificateRepository.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(), requestCertificateDto.getCertificateDto().getIssuerName());
-
-        Random rand = new Random();
-        Long serial = Math.abs(new Long(rand.nextInt(1000000000)));
+        Long serial = generateSerialNumber();
         Certificate certForDatabase = new Certificate(
                 serial,
                 Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
@@ -88,7 +83,7 @@ public class CertificateServiceImpl implements CertificateService {
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
         IssuerData issuerData = keyStoreReader.readIssuerFromStore(requestCertificateDto.getKeystoreName(),
-                issuerCertificate.getSerialNumber().toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
+                serial.toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
                 requestCertificateDto.getKeystorePassword().toCharArray());
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
 
@@ -115,8 +110,7 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         KeyPair keyPairSubject = generateKeyPair();
-        Random rand = new Random();
-        Long serial = Math.abs(new Long(rand.nextInt(1000000000)));
+        Long serial = generateSerialNumber();
 
         Certificate certificateForDatabase = new Certificate(
                 serial,
@@ -176,12 +170,7 @@ public class CertificateServiceImpl implements CertificateService {
         return types;
     }
 
-    @Override
-    public void isSerialNumberUnique(Long serialNumber){
-        Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
-        if(certificate != null)
-            throw new AlreadyExistsException("Serial number must be unique");
-    }
+
 
     @Override
     public List<CertificateDto> getAllIssuers() {
@@ -213,6 +202,15 @@ public class CertificateServiceImpl implements CertificateService {
         Certificate certificate = certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerSerial);
         certificate.setState(State.REVOKED);
         certificateRepository.save(certificate);
+    }
+
+    private Long generateSerialNumber(){
+        Long serialNumber;
+        do{
+            Random rand = new Random();
+            serialNumber = Math.abs(new Long(rand.nextInt(1000000000)));
+        }while(certificateRepository.findCertificateBySerialNumber(serialNumber) != null);
+        return serialNumber;
     }
 
     private KeyPair generateKeyPair() {
