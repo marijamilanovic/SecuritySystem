@@ -1,26 +1,24 @@
 <table class="table">
     <thead>
       <tr>
-        <th scope="col">#</th>
         <th scope="col">Serial number</th>
-        <th scope="col">Issued to</th>
-        <th scope="col">Issuer id</th>
+        <!--<th scope="col">Public key</th>-->
         <th scope="col">Issuer name</th>
+        <th scope="col">Issuer serial</th>
         <th scope="col">Validation period</th>
-        <th scope="col">Public key</th>
         <th scope="col">Certificate type</th>
-        <th scope="col">Status</th>
+        <th scope="col">Download</th>
       </tr>
     </thead>
     <tbody>
-      <!--<tr *ngFor="let couns of counseling; let i = index;">
-          <td>{{i+1}}</td>
-          <td>{{couns.patientDto.user.name}} </td>
-          <td>{{couns.patientDto.user.surname}}</td>
-          <td>{{couns.schedule.startDate}}, {{couns.schedule.startTime}}-{{couns.schedule.endTime}}</td>
-          <td>{{couns.patientCame}}</td>
-          <td> <span *ngFor="let allergy of couns.patientDto.allergicMedicines;">{{allergy}}, </span> </td>
-          <td><button *ngIf='couns.patientCame == null' class="btn btn-primary" [routerLink]="['/allcounselings', couns.id]">Start</button></td>
-      </tr>-->
+      <tr *ngFor="let c of certificates; index as i;">
+        <td>{{c.serialNumber}}</td>
+        <!--<td>{{c.publicKey}}</td>-->
+        <td>{{c.issuerName}}</td>
+        <td>{{c.issuerSerial}}</td>
+        <td>{{c.validFrom}}  -  {{c.validTo}}</td>
+        <td>{{c.certificateType}}</td>
+        <button class="btn btn-secondary" (click)="download(i)">Download</button>
+    </tr>
     </tbody>
   </table>

@@ -22,8 +22,8 @@ public class CertificateController {
 
 
     @GetMapping
-    public ResponseEntity<List<CertificateDto>> getCertificates(){
-        return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
+    public List<CertificateDto> getCertificates(){
+        return certificateService.findAll();
     }
 
     @PostMapping

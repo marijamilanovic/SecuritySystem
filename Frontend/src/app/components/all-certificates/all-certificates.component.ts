@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
   selector: 'app-all-certificates',
@@ -7,9 +8,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AllCertificatesComponent implements OnInit {
 
-  constructor() { }
+  certificates: any;
+
+  constructor(private certificateService: CertificateService) { }
 
   ngOnInit(): void {
+    this.certificateService.getAllCertificates().subscribe((listCertificate:any) => {
+      this.certificates = listCertificate;
+    });
+  }
+
+  download(i: any){
+    
   }
 
 }
