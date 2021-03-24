@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+import { CertificateService } from 'src/app/service/certificate.service';
 
 @Component({
   selector: 'app-all-certificates',
@@ -7,9 +9,32 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AllCertificatesComponent implements OnInit {
 
-  constructor() { }
+  certificates: any;
+  publicKey: any;
+  seeDetails: boolean = false;
+
+  constructor(private certificateService: CertificateService) { }
 
   ngOnInit(): void {
+    this.certificateService.getAllCertificates().subscribe((listCertificate:any) => {
+      this.certificates = listCertificate;
+    });
+  }
+
+  details(i: any){
+    this.publicKey = this.certificates[i].publicKey;
+    this.seeDetails = true;
+  }
+
+  download(i: any){
+    this.certificateService.generatePdf(this.certificates[i].id).subscribe((response: any) =>{
+      alert("Generated pdf");
+    })
+    this.seeDetails = false;
+  }
+
+  cancel(){
+    this.seeDetails = false;
   }
 
 }

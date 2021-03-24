@@ -22,8 +22,8 @@ public class CertificateController {
 
 
     @GetMapping
-    public ResponseEntity<List<CertificateDto>> getCertificates(){
-        return new ResponseEntity(certificateService.findAll(), HttpStatus.OK);
+    public List<CertificateDto> getCertificates(){
+        return certificateService.findAll();
     }
 
     @PostMapping
@@ -56,6 +56,16 @@ public class CertificateController {
     @PostMapping("/root")
     public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
+    }
+
+    @PostMapping("/intermediate")
+    public ResponseEntity<X509Certificate> generateIntermediateCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addIntermediateCertificate(certificate), HttpStatus.OK);
+    }
+
+    @PostMapping("/end_entity")
+    public ResponseEntity<X509Certificate> generateEndEntityCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addEndEntityCertificate(certificate), HttpStatus.OK);
     }
 
     @DeleteMapping("/revoke/{serialNumber}/{issuerSerial}")

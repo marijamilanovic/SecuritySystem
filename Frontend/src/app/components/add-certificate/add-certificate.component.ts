@@ -1,3 +1,4 @@
+import { createUrlResolverWithoutPackagePrefix } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -37,7 +38,7 @@ export class AddCertificateComponent implements OnInit {
   certificateDto: any;
   requestCertificate: any;
 
-  constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService) { 
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
@@ -77,11 +78,42 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
+    if(this.requestCertificate.certificateDto.certificateType = 'ROOT'){
+      this.createRoot();
+    }
+
+    if(this.requestCertificate.certificateDto.certificateType = 'INTERMEDIATE'){
+      this.createIntermediate();
+    }
+
+    if(this.requestCertificate.certificateDto.certificateType = 'END_ENTITY'){
+      this.createEndEntity();
+    }
+    
+  }
+
+  createRoot(){
     this.certificateService.createRootCertificate(this.requestCertificate).subscribe((response: any) =>{
-     this.toastrService.success("Added certificate");
-    }, (err: any)=>{
-      this.toastrService.error("Error while create certificate "+err);
-    })
+      alert("Added certificate");
+     }, (err: any)=>{
+       alert("Error while create certificate "+err);
+     })
+  }
+
+  createIntermediate(){
+    this.certificateService.createIntermediateCertificate(this.requestCertificate).subscribe((response: any) =>{
+      alert("Added intermediate certificate");
+     }, (err: any)=>{
+       alert("Error while create certificate "+err);
+     })
+  }
+
+  createEndEntity(){
+    this.certificateService.createEndEntityCertificate(this.requestCertificate).subscribe((response: any) =>{
+      alert("Added end-entity certificate");
+     }, (err: any)=>{
+       alert("Error while create certificate "+err);
+     })
   }
 
 }

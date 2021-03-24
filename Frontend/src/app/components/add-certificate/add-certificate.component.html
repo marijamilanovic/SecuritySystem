@@ -32,7 +32,9 @@
             <br>
             <div> 
                 <h5>Certificate type</h5><select name="typeSelect" [(ngModel)]="requestCertificate.certificateDto.certificateType" >
-                    <option *ngFor="let type of types">{{type}}</option>
+                    <option value="ROOT">root</option>
+                    <option value="INTERMEDIATE">intermediate</option>
+                    <option value="END_ENTITY">end entity</option>
                 </select>
             </div>
 
@@ -41,7 +43,7 @@
             <br>
             <br>
             <div> 
-                <h5>Issuer</h5><select name="issuerSelect" >
+                <h5>Issuer</h5><select name="issuerSelect">
                     <option *ngFor="let issuer of issuers">{{issuer.owner}} {{issuer.serialNumber}}</option>
                 </select>
             </div>
@@ -49,7 +51,7 @@
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
-            <input type="password" placeholder="KeyStore password" name="password" style="width: 300px" required>
+            <input type="password" [(ngModel)]="requestCertificate.keystorePassword" placeholder="KeyStore password" name="password" style="width: 300px" required>
 
             <br><br>
             <button class="btn btn-warning" style="width: 200px">Save</button>
