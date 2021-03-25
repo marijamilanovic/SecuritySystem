@@ -38,7 +38,11 @@ export class AllCertificatesComponent implements OnInit {
   }
 
   revoke(i: any){
-    // uraditi
+    this.certificateService.revokeCertificate(this.certificates[i].serialNumber).subscribe(() =>{
+      alert("Certificate with serial:" + this.certificates[i].serialNumber + " has been revocated");
+    }, error => {
+      alert("Something went wrong!");
+    });
   }
 
 }
