@@ -31,11 +31,11 @@ export class CertificateService {
   }
 
   createIntermediateCertificate(certificate: any): any{
-    return this.httpClient.post(INTERMEDIATE_PATH, certificate);
+    return this.httpClient.post(CERTIFICATE_PATH, certificate);
   }
 
   createEndEntityCertificate(certificate: any): any{
-    return this.httpClient.post(ENDENTITY_PATH, certificate);
+    return this.httpClient.post(CERTIFICATE_PATH, certificate);
   }
 
   generatePdf(id: any): any{
