@@ -22,7 +22,7 @@ public class CertificateController {
 
 
     @GetMapping
-    public List<CertificateDto> getCertificates(){
+    public List<CertificateDto> getAllCertificates(){
         return certificateService.findAll();
     }
 
@@ -36,6 +36,27 @@ public class CertificateController {
         return certificateService.getAllIssuers();
     }
 
+    @GetMapping("/chain/{serialNumber}")
+    public List<CertificateDto> getCertificateChain(@PathVariable Long serialNumber){
+        return certificateService.getCertificateChain(serialNumber);
+    }
+
+    @PostMapping("/root")
+    public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
+        return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<X509Certificate> generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+        return new ResponseEntity(certificateService.addCertificate(requestCertificateDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/revoke/{serialNumber}")
+    public void revokeCertificate(@PathVariable Long serialNumber){
+        certificateService.revokeCertificateChain(serialNumber);
+    }
+
+
     @GetMapping("/states")
     public List<String> getStates(){
         return certificateService.getStates();
@@ -44,36 +65,5 @@ public class CertificateController {
     @GetMapping("/types")
     public List<String> getCertificateTypes() {
         return certificateService.getCertificateTypes();
-    }
-
-
-    @PostMapping("/root")
-    public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
-        return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
-    }
-
-    @PostMapping
-    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
-        return new ResponseEntity(certificateService.addCertificate(requestCertificateDto), HttpStatus.OK);
-    }
-
-    @PostMapping("/intermediate")
-    public ResponseEntity<X509Certificate> generateIntermediateCertificate(@RequestBody RequestCertificateDto certificate){
-        return new ResponseEntity(certificateService.addIntermediateCertificate(certificate), HttpStatus.OK);
-    }
-
-    @PostMapping("/end_entity")
-    public ResponseEntity<X509Certificate> generateEndEntityCertificate(@RequestBody RequestCertificateDto certificate){
-        return new ResponseEntity(certificateService.addEndEntityCertificate(certificate), HttpStatus.OK);
-    }
-
-    @DeleteMapping("/revoke/{serialNumber}")
-    public void revokeCertificate(@PathVariable Long serialNumber){
-        certificateService.revokeCertificateChain(serialNumber);
-    }
-
-    @GetMapping("/chain/{serialNumber}")
-    public List<CertificateDto> getCertificateChain(@PathVariable Long serialNumber){
-        return certificateService.getCertificateChain(serialNumber);
     }
 }

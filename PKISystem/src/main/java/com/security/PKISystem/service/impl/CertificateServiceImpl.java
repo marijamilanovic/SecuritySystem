@@ -42,27 +42,16 @@ public class CertificateServiceImpl implements CertificateService {
 
     public CertificateServiceImpl(){Security.addProvider(new BouncyCastleProvider());}
 
-    @Override
-    public Certificate save(Certificate certificate) {
-        return certificateRepository.save(certificate);
-    }
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-
         if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY)
             throw new ForbiddenException("Issuer have no permission to sign certificate.");
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
 
-        String keyStore = "";
-        CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
-
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
-        if(certificateType == CertificateType.INTERMEDIATE)
-            keyStore = intermediateKSPath;
-        else if(certificateType == CertificateType.END_ENTITY)
-            keyStore = endEntityKSPath;
+        String keyStore = certificateValidationService.getCertificateKeyStore(requestCertificateDto.getCertificateDto().getCertificateType());
 
         File f = new File(keyStore);
         if(f.exists() && !f.isDirectory()) {
@@ -73,6 +62,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyPair keyPairSubject = generateKeyPair();
         Long serial = generateSerialNumber();
+
         Certificate certForDatabase = new Certificate(
                 serial,
                 Base64.getEncoder().encodeToString(keyPairSubject.getPublic().getEncoded()),
@@ -106,6 +96,7 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
+        // TODO: Check date validity only
 //        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
 //            return null;
 
@@ -145,23 +136,63 @@ public class CertificateServiceImpl implements CertificateService {
         return certificate;
     }
 
-    //TODO: Implementirati
     @Override
-    public X509Certificate addIntermediateCertificate(RequestCertificateDto requestCertificateDto) {
-        return addRootCertificate(requestCertificateDto);
-    }
+    public Certificate findCertificateById(Long id) { return certificateRepository.findCertificateById(id); }
 
     @Override
-    public X509Certificate addEndEntityCertificate(RequestCertificateDto requestCertificateDto) {
-        return addRootCertificate(requestCertificateDto);
+    public Certificate getCertificateBySerialNumber(Long serialNumber){
+        return certificateRepository.findCertificateBySerialNumber(serialNumber);
     }
-
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
         return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
     }
 
+    @Override
+    public List<CertificateDto> findAll() {
+        List<CertificateDto> certificateDtos = new ArrayList<>();
+        for(Certificate c: certificateRepository.findAll()){
+            certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
+        }
+        return certificateDtos;
+    }
+
+    @Override
+    public List<CertificateDto> getAllIssuers() {
+        List<CertificateDto> certificateDtos = new ArrayList<>();
+        for(Certificate c: certificateRepository.findAll()){
+            if(c.getCertificateType() == CertificateType.INTERMEDIATE || c.getCertificateType() == CertificateType.ROOT){
+                certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
+            }
+        }
+        return certificateDtos;
+    }
+
+    @Override
+    public List<CertificateDto> getCertificateChain(Long serialNumber){
+        Certificate currCertificate = getCertificateBySerialNumber(serialNumber);
+        List<CertificateDto> certificateDtos = new ArrayList<>();
+        while(true) {
+            certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(currCertificate));
+            if(currCertificate.getCertificateType() == CertificateType.ROOT){
+                return certificateDtos;
+            }
+            currCertificate = getCertificateBySerialNumber(currCertificate.getIssuerSerial());
+        }
+    }
+
+    @Override
+    public void revokeCertificateChain(Long serialNumber) {
+        revokeCertificate(serialNumber);
+        if(certificateRepository.findCertificateBySerialNumber(serialNumber).getCertificateType() == CertificateType.END_ENTITY)
+            return;
+        for(Certificate c : certificateRepository.findCertificateByIssuerSerial(serialNumber)){
+            if(c.getSerialNumber().equals(c.getIssuerSerial()))
+                continue;
+            revokeCertificateChain(c.getSerialNumber());
+        }
+    }
 
     @Override
     public List<String> getStates() {
@@ -180,35 +211,6 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
 
-
-    @Override
-    public List<CertificateDto> getAllIssuers() {
-        List<CertificateDto> certificateDtos = new ArrayList<>();
-        for(Certificate c: certificateRepository.findAll()){
-            if(c.getCertificateType() == CertificateType.INTERMEDIATE || c.getCertificateType() == CertificateType.ROOT){
-                certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
-            }
-        }
-        return certificateDtos;
-    }
-
-    @Override
-    public Certificate findCertificateBySerialNumberAndOwner(Long serialNumber, String owner) {
-        return certificateRepository.findCertificateBySerialNumberAndOwner(serialNumber, owner);
-    }
-
-    @Override
-    public void revokeCertificateChain(Long serialNumber) {
-        revokeCertificate(serialNumber);
-        if(certificateRepository.findCertificateBySerialNumber(serialNumber).getCertificateType() == CertificateType.END_ENTITY)
-            return;
-        for(Certificate c : certificateRepository.findCertificateByIssuerSerial(serialNumber)){
-            if(c.getSerialNumber().equals(c.getIssuerSerial()))
-                continue;
-            revokeCertificateChain(c.getSerialNumber());
-        }
-    }
-
     private void revokeCertificate(Long serialNumber){
         Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
         certificate.setState(State.REVOKED);
@@ -224,6 +226,7 @@ public class CertificateServiceImpl implements CertificateService {
         return serialNumber;
     }
 
+    // TODO: ECC algoritam
     private KeyPair generateKeyPair() {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
@@ -237,41 +240,4 @@ public class CertificateServiceImpl implements CertificateService {
         }
         return null;
     }
-
-    @Override
-    public List<CertificateDto> findAll() {
-        List<CertificateDto> certificateDtos = new ArrayList<>();
-        for(Certificate c: certificateRepository.findAll()){
-            certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
-        }
-        return certificateDtos;
-    }
-
-    @Override
-    public Certificate getCertificateBySerialNumber(Long serialNumber){
-        return certificateRepository.findCertificateBySerialNumber(serialNumber);
-    }
-
-    @Override
-    public Certificate findCertificateByCertificateType(CertificateType certificateType) { return  this.certificateRepository.findCertificateByCertificateType(certificateType); }
-
-    @Override
-    public Certificate findCertificateById(Long id) { return this.certificateRepository.findCertificateById(id); }
-
-
-    @Override
-    public List<CertificateDto> getCertificateChain(Long serialNumber){
-        Certificate currCertificate = getCertificateBySerialNumber(serialNumber);
-        List<CertificateDto> certificateDtos = new ArrayList<>();
-        while(true) {
-            certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(currCertificate));
-            if(currCertificate.getCertificateType() == CertificateType.ROOT){
-                return certificateDtos;
-            }
-            currCertificate = getCertificateBySerialNumber(currCertificate.getIssuerSerial());
-        }
-    }
-    
-
-
 }
