@@ -46,8 +46,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
 
     @Override
     public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
-        Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
-                requestCertificateDto.getCertificateDto().getIssuerName());
+        Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
         if(checkNewCertificateDate(requestCertificateDto) && requestCertificateDto.getCertificateDto().getCertificateType() == CertificateType.ROOT){
             return true;
         }else if(checkNewCertificateDate(requestCertificateDto) && isNotRevoked(issuerCertificate) && checkNewCertificateChain(requestCertificateDto)){
@@ -65,8 +64,7 @@ public class CertificateValidationServiceServiceImpl implements CertificateValid
     public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         if(newCertificateType != CertificateType.ROOT){
-            Certificate issuerCertificate = certificateService.findCertificateBySerialNumberAndOwner(requestCertificateDto.getCertificateDto().getIssuerSerial(),
-                    requestCertificateDto.getCertificateDto().getIssuerName());
+            Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
             KeyStoreReader keyStoreReader = new KeyStoreReader();
             String issuerKeyStore = getCertificateKeyStor(issuerCertificate);
 
