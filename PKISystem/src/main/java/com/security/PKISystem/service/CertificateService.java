@@ -33,7 +33,7 @@ public interface CertificateService {
 
     X509Certificate addEndEntityCertificate(RequestCertificateDto requestCertificateDto);
 
-    void revokeCertificateChain(Long serialNumber, Long issuerSerial);
+    void revokeCertificateChain(Long serialNumber);
 
     List<String> getStates();
 
