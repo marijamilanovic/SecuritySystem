@@ -22,11 +22,11 @@
       </tr>
     </tbody>
 </table>
-<div style="background-color: white;" *ngIf="seeDetails">
-  <div>
-    <form>
+<div class="page" *ngIf="seeDetails">
+  <div class="form">
+    <form class="ngform">
         <h5>Public key:</h5>
-        <p>{{publicKey}}</p>
+        <pre>{{publicKey}}</pre>
         <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
     </form>
   </div>
