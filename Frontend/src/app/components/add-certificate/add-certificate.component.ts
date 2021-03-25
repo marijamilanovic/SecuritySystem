@@ -35,7 +35,8 @@ export class AddCertificateComponent implements OnInit {
   toDate: NgbDate | null = null;
   types: any[]=[];
   issuers: any[]=[];
-  certificateDto: any = {certificateType: '', keyUsage:''}
+  issuer: any;
+  certificateDto: any = {certificateType: '', keyUsage:'', issuerSerial:''}
   requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
   issuerMod: any = {owner:"", serialNumber:0};
 
@@ -79,15 +80,15 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
-    this.requestCertificate.certificateDto.issuerName = this.issuerMod.owner;
-    this.requestCertificate.certificateDto.issuerSerial = this.issuerMod.serialNumber;
-
     this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day;
     this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day;
     
     if(this.requestCertificate.certificateDto.certificateType == 'ROOT'){
       this.createRoot();
     }
+
+    this.requestCertificate.certificateDto.issuerName = this.issuer.owner;
+    this.requestCertificate.certificateDto.issuerSerial = this.issuer.serialNumber;
 
     if(this.requestCertificate.certificateDto.certificateType == 'INTERMEDIATE'){
       this.createIntermediate();
@@ -101,7 +102,12 @@ export class AddCertificateComponent implements OnInit {
 
   createRoot(){
     this.certificateService.createRootCertificate(this.requestCertificate).subscribe((response: any) =>{
-      alert("Added certificate");
+      if(response != null){
+        alert("Added certificate");
+      }else{
+        alert("Certificate did not created. Invalid input!");
+      }
+      
      }, (err: any)=>{
        alert("Error while create certificate "+err);
      })
@@ -109,7 +115,11 @@ export class AddCertificateComponent implements OnInit {
 
   createIntermediate(){
     this.certificateService.createIntermediateCertificate(this.requestCertificate).subscribe((response: any) =>{
-      alert("Added intermediate certificate");
+      if(response != null){
+        alert("Added certificate");
+      }else{
+        alert("Certificate did not created. Invalid input!");
+      }
      }, (err: any)=>{
        alert("Error while create certificate "+err);
      })

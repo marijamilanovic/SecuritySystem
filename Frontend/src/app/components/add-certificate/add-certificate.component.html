@@ -43,8 +43,8 @@
             <br>
             <br>
             <div *ngIf='requestCertificate.certificateDto.certificateType != "ROOT"'> 
-                <h5>Issuer</h5><select name="issuerSelect" id="issuer" [(ngModel)]="issuerMod">
-                    <option *ngFor="let issuer of issuers">{{issuer.owner}} {{issuer.serialNumber}}</option>
+                <h5>Issuer</h5><select name="issuerSelect" id="issuer" [(ngModel)]="issuer">
+                    <option *ngFor="let issuer of issuers" [ngValue]="issuer" >{{issuer.owner}} {{issuer.serialNumber}}</option>
                 </select>
             </div>
 
