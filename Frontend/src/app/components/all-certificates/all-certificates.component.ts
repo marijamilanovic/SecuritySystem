@@ -14,6 +14,7 @@ export class AllCertificatesComponent implements OnInit {
   seeDetails: boolean = false;
   certificatesChain: any[]=[];
   reverseChain: any[]=[];
+  chain: any[]=[];
 
   constructor(private certificateService: CertificateService) { }
 
@@ -30,14 +31,14 @@ export class AllCertificatesComponent implements OnInit {
     this.certificateService.viewChain(c.serialNumber).subscribe((data: any) => {
       this.certificatesChain = data;
       console.log(this.certificatesChain);
-      var br = 0;
-
+      this.chain = [];
+      var label = "";
       for(let p of this.certificatesChain){
-        br++;
-        var label = p.owner + " [" + p.serialNumber + "]";
-        this.certificatesChain.push(label);
+        label = p.owner + " [" + p.serialNumber + "]";
+        this.chain.push(label);
       }
-      console.log(this.certificatesChain);
+      this.chain.reverse();
+      console.log(this.chain);
 
     });
   }

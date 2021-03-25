@@ -25,14 +25,16 @@
 <div class="page" *ngIf="seeDetails">
   <div class="form">
     <form class="ngform">
-        <h5>Public key:</h5>
+        <h4>Public key:</h4>
         <pre>{{publicKey}}</pre>
+        <br>
+        <h4>Certificate chain: </h4>
+            <div *ngFor="let cer of chain; let i = index;">
+              <li style="list-style-type: none;font-size: 18px;">{{cer}}</li>
+            </div>
+            <br>
         <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
     </form>
-    <br><br>
-    <h4>Certificate chain: </h4>
-    <div *ngFor="let cer of reverseChain; let i = index;">
-      <li style="list-style-type: none;font-size: 18px;">{{cer.label}} {{cer.owner}} [{{cer.serialNumber}}]</li>
-  </div>
+
   </div>
 </div>
