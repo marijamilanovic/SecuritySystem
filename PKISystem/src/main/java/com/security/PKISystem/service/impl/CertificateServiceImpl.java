@@ -6,7 +6,6 @@ import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
-import com.security.PKISystem.exception.AlreadyExistsException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
@@ -256,11 +254,14 @@ public class CertificateServiceImpl implements CertificateService {
         List<CertificateDto> certificateDtos = new ArrayList<>();
         while(true) {
             certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(currCertificate));
-            if(currCertificate.getCertificateType() == CertificateType.ROOT)
+            if(currCertificate.getCertificateType() == CertificateType.ROOT){
                 return certificateDtos;
+            }
+
             currCertificate = getCertificateBySerialNumber(currCertificate.getIssuerSerial());
         }
     }
+    
 
 
 }

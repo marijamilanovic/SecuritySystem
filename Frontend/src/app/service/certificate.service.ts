@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CERTIFICATE_TYPES_PATH, CERTIFICATE_VALIDATION_PATH, ENDENTITY_PATH, INTERMEDIATE_PATH, PDF_PATH, ROOT_PATH  } from '../util/paths';
+import { CERTIFICATE_CHAIN_PATH, CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CERTIFICATE_TYPES_PATH, CERTIFICATE_VALIDATION_PATH, ENDENTITY_PATH, INTERMEDIATE_PATH, PDF_PATH, ROOT_PATH  } from '../util/paths';
 
 
 @Injectable({
@@ -40,6 +40,10 @@ export class CertificateService {
 
   generatePdf(id: any): any{
     return this.httpClient.get(PDF_PATH + "/" + id);
+  }
+
+  viewChain(serialNumber: any):any{
+    return this.httpClient.get(CERTIFICATE_CHAIN_PATH + "/" + serialNumber);
   }
 
 }

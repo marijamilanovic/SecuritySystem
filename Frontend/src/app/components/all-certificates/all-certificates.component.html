@@ -17,7 +17,7 @@
         <td>{{c.validFrom}}  -  {{c.validTo}}</td>
         <td>{{c.certificateType}}</td>
         <td><button class="btn btn-light" (click)="revoke(i)">❌</button></td>
-        <td><button class="btn btn-secondary" (click)="details(i)">Details</button></td>
+        <td><button class="btn btn-secondary" (click)="details(i, c)">Details</button></td>
         <td><button class="btn btn-info" (click)="download(i)">Generate PDF</button></td>
       </tr>
     </tbody>
@@ -29,5 +29,10 @@
         <p>{{publicKey}}</p>
         <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
     </form>
+    <br><br>
+    <h4>Certificate chain: </h4>
+    <div *ngFor="let cer of reverseChain; let i = index;">
+      <li style="list-style-type: none;font-size: 18px;">{{cer.label}} {{cer.owner}} [{{cer.serialNumber}}]</li>
+  </div>
   </div>
 </div>
