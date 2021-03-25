@@ -1,5 +1,6 @@
 package com.security.PKISystem.service;
 
+import com.security.PKISystem.domain.CertificateType;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import org.springframework.stereotype.Service;
@@ -12,5 +13,7 @@ public interface CertificateValidationService {
     boolean isCertificateValid(Long serialNumber, Long issuerId);
 
     boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto);
+
+    String getCertificateKeyStore(CertificateType certType);
 
 }

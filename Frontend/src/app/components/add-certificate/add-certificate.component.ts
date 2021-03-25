@@ -35,8 +35,9 @@ export class AddCertificateComponent implements OnInit {
   toDate: NgbDate | null = null;
   types: any[]=[];
   issuers: any[]=[];
-  certificateDto: any = {certificateType: ''}
-  requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto};
+  certificateDto: any = {certificateType: '', keyUsage:''}
+  requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
+  issuerMod: any = {owner:"", serialNumber:0};
 
   constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
     this.fromDate = calendar.getToday();
@@ -63,7 +64,7 @@ export class AddCertificateComponent implements OnInit {
       this.toDate = null;
       this.fromDate = date;
     }
-  }
+  } 
 
   isHovered(date: NgbDate) {
     return this.fromDate && !this.toDate && this.hoveredDate && date.after(this.fromDate) && date.before(this.hoveredDate);
@@ -78,6 +79,8 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
+    this.requestCertificate.certificateDto.issuerName = this.issuerMod.owner;
+    this.requestCertificate.certificateDto.issuerSerial = this.issuerMod.serialNumber;
 
     this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day;
     this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day;

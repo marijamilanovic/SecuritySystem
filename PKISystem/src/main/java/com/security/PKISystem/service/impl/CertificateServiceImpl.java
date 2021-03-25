@@ -6,6 +6,7 @@ import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
+import com.security.PKISystem.exception.ForbiddenException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -48,6 +49,9 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
+
+        if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY)
+            throw new ForbiddenException("Issuer have no permission to sign certificate.");
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return null;
 
@@ -85,7 +89,8 @@ public class CertificateServiceImpl implements CertificateService {
         KeyStoreReader keyStoreReader = new KeyStoreReader();
 
         // TODO: Provera da li je issuer root ili intermediate i postavljanje putanje
-        IssuerData issuerData = keyStoreReader.readIssuerFromStore(rootKSPath,
+        String path = certificateValidationService.getCertificateKeyStore(certificateRepository.findCertificateBySerialNumber(certForDatabase.getIssuerSerial()).getCertificateType());
+        IssuerData issuerData = keyStoreReader.readIssuerFromStore(path,
                 requestCertificateDto.getCertificateDto().getIssuerSerial().toString(), requestCertificateDto.getKeystorePassword().toCharArray(),
                 requestCertificateDto.getKeystorePassword().toCharArray());
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);

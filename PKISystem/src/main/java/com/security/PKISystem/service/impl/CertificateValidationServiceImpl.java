@@ -64,6 +64,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         if(newCertificateType != CertificateType.ROOT){
             Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
+
             if(checkCertificateChain(issuerCertificate))
                 return true;
             else
@@ -85,7 +86,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
 
     public boolean checker(Certificate certificate){
         KeyStoreReader keyStoreReader = new KeyStoreReader();
-        String certificateKeyStore = getCertificateKeyStore(certificate);
+        String certificateKeyStore = getCertificateKeyStore(certificate.getCertificateType());
         java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(certificateKeyStore, "ftn", certificate.getSerialNumber().toString());
         try {
             certificateToCheck.verify(loadPublicKey(certificate.getPublicKey()));
@@ -102,13 +103,14 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         return true;
     }
 
-    public String getCertificateKeyStore(Certificate certificate){
+    @Override
+    public String getCertificateKeyStore(CertificateType certType){
         String certificateKeyStore = "";
-        if (certificate.getCertificateType() == CertificateType.ROOT){
+        if (certType == CertificateType.ROOT){
             certificateKeyStore = rootKSPath;
-        }else if(certificate.getCertificateType() == CertificateType.INTERMEDIATE){
+        }else if(certType == CertificateType.INTERMEDIATE){
             certificateKeyStore = intermediateKSPath;
-        }else if(certificate.getCertificateType() == CertificateType.END_ENTITY){
+        }else if(certType == CertificateType.END_ENTITY){
             certificateKeyStore = endEntityKSPath;
         }
         return certificateKeyStore;
