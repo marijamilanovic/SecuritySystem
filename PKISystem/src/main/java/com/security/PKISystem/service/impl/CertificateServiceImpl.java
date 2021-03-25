@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -261,11 +260,14 @@ public class CertificateServiceImpl implements CertificateService {
         List<CertificateDto> certificateDtos = new ArrayList<>();
         while(true) {
             certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(currCertificate));
-            if(currCertificate.getCertificateType() == CertificateType.ROOT)
+            if(currCertificate.getCertificateType() == CertificateType.ROOT){
                 return certificateDtos;
+            }
+
             currCertificate = getCertificateBySerialNumber(currCertificate.getIssuerSerial());
         }
     }
+    
 
 
 }
