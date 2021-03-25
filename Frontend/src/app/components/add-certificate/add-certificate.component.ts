@@ -35,8 +35,8 @@ export class AddCertificateComponent implements OnInit {
   toDate: NgbDate | null = null;
   types: any[]=[];
   issuers: any[]=[];
-  certificateDto: any = {certificateType: ''}
-  requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto};
+  certificateDto: any = {certificateType: '', keyUsage:''}
+  requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
   issuerMod: any = {owner:"", serialNumber:0};
 
   constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 

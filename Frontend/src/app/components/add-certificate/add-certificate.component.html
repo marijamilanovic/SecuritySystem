@@ -42,7 +42,7 @@
             <!-- Issuer name -->
             <br>
             <br>
-            <div> 
+            <div *ngIf='requestCertificate.certificateDto.certificateType != "ROOT"'> 
                 <h5>Issuer</h5><select name="issuerSelect" id="issuer" [(ngModel)]="issuerMod">
                     <option *ngFor="let issuer of issuers">{{issuer.owner}} {{issuer.serialNumber}}</option>
                 </select>
@@ -51,7 +51,8 @@
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
-            <input type="password" [(ngModel)]="requestCertificate.keystorePassword" placeholder="KeyStore password" name="password" style="width: 300px" required>
+            <input type="text" placeholder="Key usage" [(ngModel)]="requestCertificate.certificateDto.keyUsage" name="usage" id="usage" style="width: 300px">
+            <!-- <input type="password" [(ngModel)]="requestCertificate.keystorePassword" placeholder="KeyStore password" name="password" style="width: 300px" required> -->
 
             <br><br>
             <button class="btn btn-warning" style="width: 200px" (click) = "addNewCertificate()">Save</button>
