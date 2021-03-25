@@ -64,21 +64,11 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         if(newCertificateType != CertificateType.ROOT){
             Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
-            KeyStoreReader keyStoreReader = new KeyStoreReader();
-            String issuerKeyStore = getCertificateKeyStore(issuerCertificate.getCertificateType());
 
-            java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(issuerKeyStore, "", issuerCertificate.getSerialNumber().toString());
-            try {
-                certificateToCheck.verify(loadPublicKey(issuerCertificate.getPublicKey()));
-            } catch (SignatureException e) {
-                System.out.println("\nValidacija neuspesna");
-                e.printStackTrace();
-            } catch(GeneralSecurityException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(checkCertificateChain(issuerCertificate))
+                return true;
+            else
                 return false;
-            }
         }
         return true;
     }

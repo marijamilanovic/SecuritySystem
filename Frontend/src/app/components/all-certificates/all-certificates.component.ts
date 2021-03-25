@@ -30,16 +30,15 @@ export class AllCertificatesComponent implements OnInit {
     this.certificateService.viewChain(c.serialNumber).subscribe((data: any) => {
       this.certificatesChain = data;
       console.log(this.certificatesChain);
-      for (var i = this.certificatesChain.length - 1; i >= 0; i--) {
-        var minus = "--";
-        console.log(this.certificatesChain[i]);
-        for(var j = 0; j<i; i++){
-          minus = minus.concat(minus);
-        }
-        this.certificatesChain[i].label = minus;
-        this.reverseChain.push(this.certificatesChain[i]);
+      var br = 0;
+
+      for(let p of this.certificatesChain){
+        br++;
+        var label = p.owner + " [" + p.serialNumber + "]";
+        this.certificatesChain.push(label);
       }
-      console.log(this.reverseChain);
+      console.log(this.certificatesChain);
+
     });
   }
 
