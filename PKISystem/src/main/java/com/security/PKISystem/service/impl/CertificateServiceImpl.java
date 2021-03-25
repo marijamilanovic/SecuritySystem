@@ -48,8 +48,8 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
-//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-//            return null;
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+            return null;
 
         String keyStore = "";
         CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
@@ -263,7 +263,6 @@ public class CertificateServiceImpl implements CertificateService {
             if(currCertificate.getCertificateType() == CertificateType.ROOT){
                 return certificateDtos;
             }
-
             currCertificate = getCertificateBySerialNumber(currCertificate.getIssuerSerial());
         }
     }
