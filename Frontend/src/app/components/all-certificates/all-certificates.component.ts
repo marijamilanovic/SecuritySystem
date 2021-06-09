@@ -46,7 +46,7 @@ export class AllCertificatesComponent implements OnInit {
 
   download(i: any){
     this.certificateService.generatePdf(this.certificates[i].id).subscribe((response: any) =>{
-      alert("Generated pdf");
+      alert("Generated file");
     })
     this.seeDetails = false;
   }

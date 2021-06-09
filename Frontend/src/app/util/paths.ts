@@ -11,4 +11,4 @@ export const REVOKE_PATH = CERTIFICATE_PATH + '/revoke';
 
 export const ROOT_PATH = CERTIFICATE_PATH + '/root';
 
-export const PDF_PATH = BACKEND_PATH + '/pdf';
+export const PDF_PATH = BACKEND_PATH + '/download';
