@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {NgbDate, NgbCalendar, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
@@ -40,9 +41,10 @@ export class AddCertificateComponent implements OnInit {
   requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
   issuerMod: any = {owner:'', serialNumber:0};
   today: {year: number, month: number, day: number};
+  now: any;
   
   constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService,
-              private router: Router) {
+              private router: Router, private datePipe: DatePipe) {
     this.fromDate = calendar.getToday();
     this.today = calendar.getToday();
     console.log(this.fromDate);
@@ -82,8 +84,8 @@ export class AddCertificateComponent implements OnInit {
   }
 
   addNewCertificate(){
-    this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day;
-    this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day;
+    this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day + ' ' + '00:00:00';
+    this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day + ' ' + '00:00:00';
     if(!this.fieldChecker()){
       return;
     }
@@ -112,7 +114,7 @@ export class AddCertificateComponent implements OnInit {
           this.router.navigate(['allCertificates']);
         });
      }, (err: any)=>{
-        this.toastrService.error("Error while create certificate " + err);
+        this.toastrService.error(err.error.text);
      })
   }
 

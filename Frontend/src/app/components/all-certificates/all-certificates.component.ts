@@ -21,6 +21,7 @@ export class AllCertificatesComponent implements OnInit {
   ngOnInit(): void {
     this.certificateService.getAllCertificates().subscribe((listCertificate:any) => {
       this.certificates = listCertificate;
+      console.log(this.certificates);
     });
   }
 

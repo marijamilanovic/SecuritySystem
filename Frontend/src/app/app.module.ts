@@ -10,6 +10,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { DatePipe } from '@angular/common';
 
 import { AddCertificateComponent } from './components/add-certificate/add-certificate.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -36,7 +37,7 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
       positionClass: 'toast-bottom-right'
     })
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

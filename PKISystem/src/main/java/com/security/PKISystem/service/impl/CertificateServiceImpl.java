@@ -1,5 +1,6 @@
 package com.security.PKISystem.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
@@ -22,10 +23,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class CertificateServiceImpl implements CertificateService {
@@ -99,11 +98,13 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public ResponseEntity addRootCertificate(RequestCertificateDto requestCertificateDto) {
         // TODO: Check date validity only
-//        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-//            return null;
-        if(requestCertificateDto == null){
-            return new ResponseEntity("Certificate did not created. Invalid input!", HttpStatus.OK);
+        long validFrom = requestCertificateDto.getCertificateDto().getValidFrom().getTime();
+        if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
+            requestCertificateDto.getCertificateDto().setValidFrom(new Date());
+            System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
         }
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.OK);
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
@@ -128,6 +129,7 @@ public class CertificateServiceImpl implements CertificateService {
                 CertificateType.ROOT, State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
         this.certificateRepository.save(certificateForDatabase);
+        System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
 
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
         IssuerData issuerData = new IssuerData(keyPairSubject.getPrivate(), requestCertificateDto, serial);
@@ -245,4 +247,5 @@ public class CertificateServiceImpl implements CertificateService {
         }
         return null;
     }
+
 }

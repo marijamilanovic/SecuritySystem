@@ -27,12 +27,12 @@ public class Certificate implements Serializable {
     @Column
     private String keyUsage;
     @Column
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
+    //@Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:yy", timezone = "GMT+02:00")
     private Date validFrom;
     @Column
-    @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
+    //@Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:yy", timezone = "GMT+02:00")
     private Date validTo;
     @Column
     private CertificateType certificateType;

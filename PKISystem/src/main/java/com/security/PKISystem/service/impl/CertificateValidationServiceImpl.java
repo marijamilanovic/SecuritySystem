@@ -17,6 +17,7 @@ import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Service
 public class CertificateValidationServiceImpl implements CertificateValidationService {
@@ -56,7 +57,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
 
     public boolean checkDate(Date validFrom, Date validTo){
         long current = new Date().getTime();
-        return validFrom.getTime() >= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
+        return validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
     }
     
 
@@ -128,7 +129,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
         if(checkDate(validFrom, validTo) && certificateType == CertificateType.ROOT){
             return true;
-        }else if(checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
+        }else if(certificateType != CertificateType.ROOT && checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
                 validTo.before(issuerCertificate.getValidTo())){
             return true;
         }

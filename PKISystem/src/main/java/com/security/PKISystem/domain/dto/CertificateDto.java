@@ -16,10 +16,10 @@ public class CertificateDto {
     private String issuerName;
     private Long issuerSerial;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+02:00")
     private Date validFrom;
     @Temporal(TemporalType.DATE)
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+01:00")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+02:00")
     private Date validTo;
     private CertificateType certificateType;
     private State state;

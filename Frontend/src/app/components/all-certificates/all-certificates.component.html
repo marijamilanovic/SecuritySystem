@@ -14,7 +14,7 @@
         <td>{{c.serialNumber}}</td>
         <td>{{c.owner}}</td>
         <td>{{c.issuerSerial}}</td>
-        <td>{{c.validFrom}}  -  {{c.validTo}}</td>
+        <td>{{c.validFrom | date:'longDate'}}  -  {{c.validTo | date:'longDate'}}</td>
         <td>{{c.certificateType}}</td>
         <td><button class="btn btn-light" (click)="revoke(i)">❌</button></td>
         <td><button class="btn btn-secondary" (click)="details(i, c)">Details</button></td>
