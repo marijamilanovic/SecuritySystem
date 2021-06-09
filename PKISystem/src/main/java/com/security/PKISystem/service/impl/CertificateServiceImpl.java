@@ -15,6 +15,8 @@ import com.security.PKISystem.service.CertificateValidationService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -95,10 +97,13 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto) {
+    public ResponseEntity addRootCertificate(RequestCertificateDto requestCertificateDto) {
         // TODO: Check date validity only
 //        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
 //            return null;
+        if(requestCertificateDto == null){
+            return new ResponseEntity("Certificate did not created. Invalid input!", HttpStatus.OK);
+        }
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
@@ -133,7 +138,7 @@ public class CertificateServiceImpl implements CertificateService {
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
 
-        return certificate;
+        return new ResponseEntity(certificate, HttpStatus.OK);
     }
 
     @Override

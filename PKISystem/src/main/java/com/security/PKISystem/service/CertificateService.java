@@ -3,6 +3,7 @@ package com.security.PKISystem.service;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.cert.X509Certificate;
@@ -25,7 +26,7 @@ public interface CertificateService {
 
     X509Certificate addCertificate(RequestCertificateDto requestCertificateDto);
 
-    X509Certificate addRootCertificate(RequestCertificateDto requestCertificateDto);
+    ResponseEntity addRootCertificate(RequestCertificateDto requestCertificateDto);
 
     void revokeCertificateChain(Long serialNumber);
 

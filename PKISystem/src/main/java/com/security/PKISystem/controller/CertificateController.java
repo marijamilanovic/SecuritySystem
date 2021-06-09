@@ -42,8 +42,8 @@ public class CertificateController {
     }
 
     @PostMapping("/root")
-    public ResponseEntity<X509Certificate> generateRootCertificate(@RequestBody RequestCertificateDto certificate){
-        return new ResponseEntity(certificateService.addRootCertificate(certificate), HttpStatus.OK);
+    public ResponseEntity generateRootCertificate(@RequestBody RequestCertificateDto certificate){
+        return certificateService.addRootCertificate(certificate);
     }
 
     @PostMapping

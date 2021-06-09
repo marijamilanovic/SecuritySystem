@@ -1,5 +1,5 @@
-import { createUrlResolverWithoutPackagePrefix } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {NgbDate, NgbCalendar, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { CertificateService } from 'src/app/service/certificate.service';
@@ -38,10 +38,11 @@ export class AddCertificateComponent implements OnInit {
   issuer: any;
   certificateDto: any = {certificateType: '', keyUsage:'', issuerSerial:''}
   requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
-  issuerMod: any = {owner:"", serialNumber:0};
+  issuerMod: any = {owner:'', serialNumber:0};
   today: {year: number, month: number, day: number};
   
-  constructor(calendar: NgbCalendar, private certificateService: CertificateService) {
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService,
+              private router: Router) {
     this.fromDate = calendar.getToday();
     this.today = calendar.getToday();
     console.log(this.fromDate);
@@ -51,11 +52,9 @@ export class AddCertificateComponent implements OnInit {
   ngOnInit(): void {
     this.certificateService.getTypes().subscribe((data: any[]) => {
       this.types = data;
-      console.log(this.types);
     });
     this.certificateService.getAllIssuers().subscribe((data: any[]) => {
       this.issuers = data;
-      console.log(this.issuers);
     });
   }
 
@@ -85,14 +84,18 @@ export class AddCertificateComponent implements OnInit {
   addNewCertificate(){
     this.requestCertificate.certificateDto.validFrom = this.fromDate.year + '-' + this.fromDate.month + '-' + this.fromDate.day;
     this.requestCertificate.certificateDto.validTo = this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day;
-    
+    if(!this.fieldChecker()){
+      return;
+    }
     if(this.requestCertificate.certificateDto.certificateType == 'ROOT'){
       this.createRoot();
+      return;
     }
-
+    if (typeof(this.issuer) == 'undefined') {
+      this.toastrService.info('Please choose issuer.');
+    }
     this.requestCertificate.certificateDto.issuerName = this.issuer.owner;
     this.requestCertificate.certificateDto.issuerSerial = this.issuer.serialNumber;
-
     if(this.requestCertificate.certificateDto.certificateType == 'INTERMEDIATE'){
       this.createIntermediate();
     }
@@ -100,42 +103,52 @@ export class AddCertificateComponent implements OnInit {
     if(this.requestCertificate.certificateDto.certificateType == 'END_ENTITY'){
       this.createEndEntity();
     }
-    
   }
 
-  createRoot(){
+  createRoot(): void{
     this.certificateService.createRootCertificate(this.requestCertificate).subscribe((response: any) =>{
-      if(response != null){
-        alert("Added certificate");
-      }else{
-        alert("Certificate did not created. Invalid input!");
-      }
-      
+        this.toastrService.success('Added new root certificate.');
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate(['allCertificates']);
+        });
      }, (err: any)=>{
-       alert("Error while create certificate "+err);
+        this.toastrService.error("Error while create certificate " + err);
      })
   }
 
-  createIntermediate(){
+  createIntermediate(): void{
     this.certificateService.createIntermediateCertificate(this.requestCertificate).subscribe((response: any) =>{
-      if(response != null){
-        alert("Added certificate");
-      }else{
-        alert("Certificate did not created. Invalid input!");
-      }
+      this.toastrService.success('Added new intermediate certificate.');
+      this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+        this.router.navigate(['allCertificates']);
+      }); 
      }, (err: any)=>{
-       alert("Error while create certificate "+err);
+      this.toastrService.error("Error while create certificate " + err);
      })
   }
 
   createEndEntity(){
     this.certificateService.createEndEntityCertificate(this.requestCertificate).subscribe((response: any) =>{
-      alert("Added end-entity certificate");
+        this.toastrService.success('Added new end-entity certificate.');
+        this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
+          this.router.navigate(['allCertificates']);
+        });
      }, (err: any)=>{
-       alert("Error while create certificate "+err);
+        this.toastrService.error("Error while create certificate " + err);
      })
   }
 
+  fieldChecker(): any{
+    if(this.requestCertificate.issuedToCommonName == '' || this.requestCertificate.surname == '' ||
+        this.requestCertificate.givenName == '' || this.requestCertificate.organisation == '' ||
+        this.requestCertificate.organisationalUnit == '' || this.requestCertificate.country == '' ||
+        this.requestCertificate.email == '' || this.requestCertificate.certificateDto.certificateType == '' ||
+        this.requestCertificate.certificateDto.keyUsage == ''){
+      this.toastrService.info('Please fill in all fields.');
+      return false;
+    }
+    return true;
+  }
 
 
 }

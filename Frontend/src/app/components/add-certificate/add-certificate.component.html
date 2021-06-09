@@ -38,11 +38,9 @@
                     <option value="END_ENTITY">end entity</option>
                 </select>
             </div>
-
-            <!-- Issuer serial number -->
-            <!-- Issuer name -->
             <br>
             <br>
+            <!-- Issuer -->
             <div *ngIf='requestCertificate.certificateDto.certificateType != "ROOT"'> 
                 <h5>Issuer</h5><select name="issuerSelect" id="issuer" [(ngModel)]="issuer">
                     <option *ngFor="let issuer of issuers" [ngValue]="issuer" >{{issuer.owner}} {{issuer.serialNumber}}</option>
