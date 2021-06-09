@@ -45,11 +45,16 @@ public class CertificateServiceImpl implements CertificateService {
 
 
     @Override
-    public X509Certificate addCertificate(RequestCertificateDto requestCertificateDto) {
+    public ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto) {
         if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY)
             throw new ForbiddenException("Issuer have no permission to sign certificate.");
+        long validFrom = requestCertificateDto.getCertificateDto().getValidFrom().getTime();
+        if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
+            requestCertificateDto.getCertificateDto().setValidFrom(new Date());
+            System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
+        }
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return null;
+            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.OK);
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         String keyStore = certificateValidationService.getCertificateKeyStore(requestCertificateDto.getCertificateDto().getCertificateType());
@@ -92,16 +97,14 @@ public class CertificateServiceImpl implements CertificateService {
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
 
-        return certificate;
+        return new ResponseEntity(certificate, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity addRootCertificate(RequestCertificateDto requestCertificateDto) {
-        // TODO: Check date validity only
         long validFrom = requestCertificateDto.getCertificateDto().getValidFrom().getTime();
         if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
-            System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
         }
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.OK);

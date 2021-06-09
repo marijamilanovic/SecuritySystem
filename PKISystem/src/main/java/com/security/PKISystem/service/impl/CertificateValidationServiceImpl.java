@@ -65,7 +65,6 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         if(newCertificateType != CertificateType.ROOT){
             Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
-
             if(checkCertificateChain(issuerCertificate))
                 return true;
             else

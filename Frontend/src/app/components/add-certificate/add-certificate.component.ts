@@ -125,7 +125,7 @@ export class AddCertificateComponent implements OnInit {
         this.router.navigate(['allCertificates']);
       }); 
      }, (err: any)=>{
-      this.toastrService.error("Error while create certificate " + err);
+      this.toastrService.error(err.error.text);
      })
   }
 
@@ -136,7 +136,7 @@ export class AddCertificateComponent implements OnInit {
           this.router.navigate(['allCertificates']);
         });
      }, (err: any)=>{
-        this.toastrService.error("Error while create certificate " + err);
+        this.toastrService.error(err.error.text);
      })
   }
 

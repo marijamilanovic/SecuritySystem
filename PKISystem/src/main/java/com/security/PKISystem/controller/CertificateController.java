@@ -48,7 +48,7 @@ public class CertificateController {
 
     @PostMapping
     public ResponseEntity<X509Certificate> generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
-        return new ResponseEntity(certificateService.addCertificate(requestCertificateDto), HttpStatus.OK);
+        return certificateService.addCertificate(requestCertificateDto);
     }
 
     @DeleteMapping("/revoke/{serialNumber}")

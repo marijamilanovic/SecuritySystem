@@ -24,7 +24,7 @@ public interface CertificateService {
 
     List<CertificateDto> getCertificateChain(Long serialNumber);
 
-    X509Certificate addCertificate(RequestCertificateDto requestCertificateDto);
+    ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto);
 
     ResponseEntity addRootCertificate(RequestCertificateDto requestCertificateDto);
 
