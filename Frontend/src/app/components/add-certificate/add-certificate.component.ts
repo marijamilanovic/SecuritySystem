@@ -1,6 +1,6 @@
 import { createUrlResolverWithoutPackagePrefix } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
-import {NgbDate, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDate, NgbCalendar, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { CertificateService } from 'src/app/service/certificate.service';
 
@@ -39,9 +39,12 @@ export class AddCertificateComponent implements OnInit {
   certificateDto: any = {certificateType: '', keyUsage:'', issuerSerial:''}
   requestCertificate: any = {issuedToCommonName: '', surname: '', givenName: '', organisation: '', organisationalUnit: '', country: '', email: '', certificateDto: this.certificateDto, keystorePassword:'ftn', keystoreIssuedPassword:'ftn'};
   issuerMod: any = {owner:"", serialNumber:0};
-
-  constructor(calendar: NgbCalendar, private certificateService: CertificateService) { 
+  today: {year: number, month: number, day: number};
+  
+  constructor(calendar: NgbCalendar, private certificateService: CertificateService) {
     this.fromDate = calendar.getToday();
+    this.today = calendar.getToday();
+    console.log(this.fromDate);
     this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   }
 
@@ -133,4 +136,8 @@ export class AddCertificateComponent implements OnInit {
      })
   }
 
+
+
 }
+
+

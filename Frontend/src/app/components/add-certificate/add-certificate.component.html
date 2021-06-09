@@ -14,7 +14,8 @@
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
             <h5>Validation period</h5>
-            <ngb-datepicker #dp (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
+            <ngb-datepicker #dp (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+            [minDate]="today">
             </ngb-datepicker>
             
             <ng-template #t let-date let-focused="focused">
@@ -52,7 +53,6 @@
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
             <input type="text" placeholder="Key usage" [(ngModel)]="requestCertificate.certificateDto.keyUsage" name="usage" id="usage" style="width: 300px">
-            <!-- <input type="password" [(ngModel)]="requestCertificate.keystorePassword" placeholder="KeyStore password" name="password" style="width: 300px" required> -->
 
             <br><br>
             <button class="btn btn-warning" style="width: 200px" (click) = "addNewCertificate()">Save</button>
