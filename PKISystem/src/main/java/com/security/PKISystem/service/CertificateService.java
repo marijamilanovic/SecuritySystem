@@ -16,8 +16,6 @@ public interface CertificateService {
 
     Certificate getCertificateBySerialNumber(Long serialNumber);
 
-    Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId);
-
     List<CertificateDto> findAll();
 
     List<CertificateDto> getValidIssuers();

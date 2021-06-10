@@ -1,11 +1,9 @@
 package com.security.PKISystem.controller;
 
-import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +20,7 @@ public class CertificateController {
 
 
     @GetMapping
-    public List<CertificateDto> getAllCertificates(){
-        return certificateService.findAll();
-    }
-
-    @GetMapping("/{serialNumber}")
-    public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
-        return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-    }
+    public List<CertificateDto> getAllCertificates(){ return certificateService.findAll(); }
 
     @GetMapping("/issuers")
     public List<CertificateDto> getValidIssuers(){

@@ -59,9 +59,19 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
     public boolean checkDate(Date validFrom, Date validTo, boolean isNew){
         long current = new Date().getTime();
         if(isNew){
-            return validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
+            if(validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime()){
+                log.info("Date for new certificate is valid.");
+                return true;
+            }
+            log.error("Date for new certificate isn't valid.");
+            return false;
         }
-        return validFrom.getTime() <= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
+        if(validFrom.getTime() <= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime()){
+            log.info("Date for certificate is valid.");
+            return true;
+        }
+        log.error("Date for certificate isn't valid.");
+        return false;
     }
 
     public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){

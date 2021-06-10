@@ -21,7 +21,6 @@ public class SubjectData {
 	public SubjectData() {}
 
 	public SubjectData(KeyPair keyPair, RequestCertificateDto certificateDto, Long serialNumber) {
-		//TODO: Napraviti mapper
 		this.publicKey = keyPair.getPublic();
 		this.x500name = CertificateMapper.mapCertificateDtoToX500name(certificateDto, serialNumber);
 		this.serialNumber = serialNumber.toString();
