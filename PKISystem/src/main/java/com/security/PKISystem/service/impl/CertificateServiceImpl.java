@@ -1,13 +1,11 @@
 package com.security.PKISystem.service.impl;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.security.PKISystem.certificates.CertificateGenerator;
 import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.*;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
-import com.security.PKISystem.exception.ForbiddenException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.security.*;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -47,7 +44,7 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto) {
         if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY)
-            throw new ForbiddenException("Issuer have no permission to sign certificate.");
+            return new ResponseEntity("Issuer have no permission to sign certificate.", HttpStatus.FORBIDDEN);
         long validFrom = requestCertificateDto.getCertificateDto().getValidFrom().getTime();
         if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
@@ -111,6 +108,7 @@ public class CertificateServiceImpl implements CertificateService {
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
+        // TODO: ispraviti keystore password
         String pass = "ftn";
         if(f.exists() && !f.isDirectory()) {
             keyStoreWriter.loadKeyStore(rootKSPath, pass.toCharArray());
@@ -168,11 +166,12 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateDtos;
     }
 
+
     @Override
-    public List<CertificateDto> getAllIssuers() {
+    public List<CertificateDto> getValidIssuers() {
         List<CertificateDto> certificateDtos = new ArrayList<>();
         for(Certificate c: certificateRepository.findAll()){
-            if(c.getCertificateType() == CertificateType.INTERMEDIATE || c.getCertificateType() == CertificateType.ROOT){
+            if(c.getCertificateType() != CertificateType.END_ENTITY && certificateValidationService.isCertificateValid(c.getSerialNumber())){
                 certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
             }
         }

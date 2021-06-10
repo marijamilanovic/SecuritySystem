@@ -12,9 +12,9 @@ public class CertificateValidationController {
     @Autowired
     private CertificateValidationService certificateValidationService;
 
-    @GetMapping("/{serialNumber}/{issuerSerial}")
-    public boolean isCertificateValid(@PathVariable Long serialNumber, @PathVariable Long issuerSerial){
-        return certificateValidationService.isCertificateValid(serialNumber, issuerSerial);
+    @GetMapping("/{serialNumber}")
+    public boolean isCertificateValid(@PathVariable Long serialNumber){
+        return certificateValidationService.isCertificateValid(serialNumber);
     }
 
 

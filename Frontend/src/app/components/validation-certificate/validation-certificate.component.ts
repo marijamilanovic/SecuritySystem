@@ -35,7 +35,7 @@ export class ValidationCertificateComponent implements OnInit {
     if(check == true){
       this.isChecked = false;
     }else{
-      this.certificateService.checkCertificate(this.cert.serialNumber, this.cert.issuerSerial).subscribe(data => {
+      this.certificateService.checkCertificate(this.cert.serialNumber).subscribe(data => {
         console.log(data);
         if(data){
           this.isValid = 1;

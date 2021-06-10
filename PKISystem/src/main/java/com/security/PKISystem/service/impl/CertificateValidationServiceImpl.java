@@ -32,12 +32,12 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
     private CertificateService certificateService;
 
     @Override
-    public boolean isCertificateValid(Long serialNumber, Long issuerId) {
+    public boolean isCertificateValid(Long serialNumber) {
         Certificate certificate = certificateService.getCertificateBySerialNumber(serialNumber);
         if (certificate != null){
-            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) &&
-                    isNotRevoked(certificate) && checkCertificateChain(certificate))
+            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) && isNotRevoked(certificate) && checkCertificateChain(certificate)){
                 return true;
+            }
             return false;
         }
         throw new NotFoundException("Certificate not found.");
@@ -117,6 +117,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
     }
 
 
+    @Override
     public boolean isNotRevoked(Certificate certificate){
         return certificate.getState() == State.VALID;
     }
@@ -135,8 +136,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         return false;
     }
 
-    public static PublicKey loadPublicKey(String stored) throws GeneralSecurityException, IOException
-    {
+    public static PublicKey loadPublicKey(String stored) throws GeneralSecurityException, IOException {
         byte[] data = Base64.getDecoder().decode((stored.getBytes()));
         X509EncodedKeySpec spec = new X509EncodedKeySpec(data);
         KeyFactory fact = KeyFactory.getInstance("RSA");

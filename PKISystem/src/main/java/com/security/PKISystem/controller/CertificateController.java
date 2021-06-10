@@ -26,14 +26,14 @@ public class CertificateController {
         return certificateService.findAll();
     }
 
-    @GetMapping("/{serialNumber}/{issuerId}")
+    @GetMapping("/{serialNumber}")
     public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
         return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
     }
 
     @GetMapping("/issuers")
-    public List<CertificateDto> getAllIssuers(){
-        return certificateService.getAllIssuers();
+    public List<CertificateDto> getValidIssuers(){
+        return certificateService.getValidIssuers();
     }
 
     @GetMapping("/chain/{serialNumber}")

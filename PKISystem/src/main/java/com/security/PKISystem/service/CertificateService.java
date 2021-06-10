@@ -20,7 +20,7 @@ public interface CertificateService {
 
     List<CertificateDto> findAll();
 
-    List<CertificateDto> getAllIssuers();
+    List<CertificateDto> getValidIssuers();
 
     List<CertificateDto> getCertificateChain(Long serialNumber);
 
