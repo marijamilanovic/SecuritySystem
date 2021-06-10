@@ -5,12 +5,14 @@ import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
 import com.security.PKISystem.service.DownloadService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.security.cert.CertificateEncodingException;
+@Slf4j
 @Service
 public class DownloadServiceImpl implements DownloadService {
 
@@ -38,6 +40,7 @@ public class DownloadServiceImpl implements DownloadService {
     }
 
     private File writeCertificate(java.security.cert.Certificate certificate, long id) {
+        log.info("Try to write certificate.");
         String home = System.getProperty("user.home");
         File file = new File(home + "\\Documents\\", "certificate" + id + ".cer");
         FileOutputStream outputStream = null;

@@ -11,6 +11,8 @@ import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+@Slf4j
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
@@ -77,6 +80,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getCertificateType(),
                 State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
+        log.info("Save certificate: " + certForDatabase.getSerialNumber());
         this.certificateRepository.save(certForDatabase);
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
@@ -129,6 +133,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getValidTo(),
                 CertificateType.ROOT, State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
+        log.info("Try to save certificate:" + certificateForDatabase.getSerialNumber());
         this.certificateRepository.save(certificateForDatabase);
 
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
@@ -144,15 +149,20 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public Certificate findCertificateById(Long id) { return certificateRepository.findCertificateById(id); }
+    public Certificate findCertificateById(Long id) {
+        log.info("Try to find certificate with id: " + id);
+        return certificateRepository.findCertificateById(id);
+    }
 
     @Override
     public Certificate getCertificateBySerialNumber(Long serialNumber){
+        log.info("Try to find certificate with serial number: " + serialNumber);
         return certificateRepository.findCertificateBySerialNumber(serialNumber);
     }
 
     @Override
     public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
+        log.info("Try to find certificate with serial number: " + serialNumber +", and issuer id: "+ issuerId);
         return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
     }
 
@@ -224,7 +234,7 @@ public class CertificateServiceImpl implements CertificateService {
 
 
     private void revokeCertificate(Long serialNumber){
-        Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
+        Certificate certificate = getCertificateBySerialNumber(serialNumber);
         certificate.setState(State.REVOKED);
         certificateRepository.save(certificate);
     }
@@ -234,7 +244,7 @@ public class CertificateServiceImpl implements CertificateService {
         do{
             Random rand = new Random();
             serialNumber = Math.abs(new Long(rand.nextInt(1000000000)));
-        }while(certificateRepository.findCertificateBySerialNumber(serialNumber) != null);
+        }while(getCertificateBySerialNumber(serialNumber) != null);
         return serialNumber;
     }
 

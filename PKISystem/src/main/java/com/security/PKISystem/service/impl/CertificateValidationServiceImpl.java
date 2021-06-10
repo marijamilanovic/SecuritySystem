@@ -8,6 +8,7 @@ import com.security.PKISystem.exception.NotFoundException;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class CertificateValidationServiceImpl implements CertificateValidationService {
     @Value("${rootKSPath}")
@@ -43,7 +45,6 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         throw new NotFoundException("Certificate not found.");
     }
 
-
     @Override
     public boolean isNewCertificateValid(RequestCertificateDto requestCertificateDto) {
         Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
@@ -62,9 +63,6 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         }
         return validFrom.getTime() <= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
     }
-
-
-    
 
     public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
         CertificateType newCertificateType = requestCertificateDto.getCertificateDto().getCertificateType();
