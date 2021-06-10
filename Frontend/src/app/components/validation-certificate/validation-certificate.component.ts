@@ -20,7 +20,6 @@ export class ValidationCertificateComponent implements OnInit {
 
   ngOnInit(): void {
     this.certificateService.getAllCertificates().subscribe((data: any[]) => {
-      console.log(data);
       this.certificates = data;
       for(let i of this.certificates){
         let name = i.owner + ' [' + i.serialNumber + '] -- ' + i.certificateType;
@@ -36,7 +35,6 @@ export class ValidationCertificateComponent implements OnInit {
       this.isChecked = false;
     }else{
       this.certificateService.checkCertificate(this.cert.serialNumber).subscribe(data => {
-        console.log(data);
         if(data){
           this.isValid = 1;
         } else if(!data){

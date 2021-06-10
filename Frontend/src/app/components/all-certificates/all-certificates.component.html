@@ -16,9 +16,12 @@
         <td>{{c.issuerSerial}}</td>
         <td>{{c.validFrom | date:'longDate'}}  -  {{c.validTo | date:'longDate'}}</td>
         <td>{{c.certificateType}}</td>
-        <td><button class="btn btn-light" (click)="revoke(i)">❌</button></td>
+        <td>
+          <button  *ngIf="c.state == 'VALID'"class="btn btn-light" (click)="revoke(i)">❌</button>
+          <button  *ngIf="c.state == 'REVOKED'"class="btn btn-light" disabled>❌</button>
+        </td>
         <td><button class="btn btn-secondary" (click)="details(i, c)">Details</button></td>
-        <td><button class="btn btn-info" (click)="download(i)">Generate PDF</button></td>
+        <td><button class="btn btn-info" (click)="download(i)">Generate file</button></td>
       </tr>
     </tbody>
 </table>
