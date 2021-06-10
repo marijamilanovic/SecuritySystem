@@ -4,5 +4,5 @@ public enum State {
     REVOKED,
     VALID,
     EXPIRED,
-    ALMOST_EXPIRED
+    INVALID
 }

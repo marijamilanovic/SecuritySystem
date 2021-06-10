@@ -2,12 +2,14 @@ package com.security.PKISystem.domain;
 
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
+import lombok.Data;
 import org.bouncycastle.asn1.x500.X500Name;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Date;
 
+@Data
 public class SubjectData {
 
 	private PublicKey publicKey;
@@ -32,46 +34,6 @@ public class SubjectData {
 		this.x500name = x500name;
 		this.serialNumber = serialNumber;
 		this.startDate = startDate;
-		this.endDate = endDate;
-	}
-
-	public X500Name getX500name() {
-		return x500name;
-	}
-
-	public void setX500name(X500Name x500name) {
-		this.x500name = x500name;
-	}
-
-	public PublicKey getPublicKey() {
-		return publicKey;
-	}
-
-	public void setPublicKey(PublicKey publicKey) {
-		this.publicKey = publicKey;
-	}
-
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 }

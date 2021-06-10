@@ -130,7 +130,6 @@ public class CertificateServiceImpl implements CertificateService {
                 CertificateType.ROOT, State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
         this.certificateRepository.save(certificateForDatabase);
-        System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
 
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
         IssuerData issuerData = new IssuerData(keyPairSubject.getPrivate(), requestCertificateDto, serial);
@@ -157,10 +156,14 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
     }
 
+    // TODO: mora se promeniti stanje i u keystore
     @Override
     public List<CertificateDto> findAll() {
         List<CertificateDto> certificateDtos = new ArrayList<>();
         for(Certificate c: certificateRepository.findAll()){
+            if(c.getValidTo().getTime() <= new Date().getTime()){
+                c.setState(State.EXPIRED);
+            }
             certificateDtos.add(CertificateMapper.mapCertificateToCertificateDto(c));
         }
         return certificateDtos;

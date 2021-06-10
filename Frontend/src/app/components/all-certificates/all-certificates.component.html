@@ -39,7 +39,7 @@
       <br>
       <h6>Validation period: <span>{{openedCertificate.validFrom | date:'longDate'}}  -  {{openedCertificate.validTo | date:'longDate'}}</span></h6>
       <h6>STATE: <span *ngIf="openedCertificate.state == 'VALID'"><b>{{openedCertificate.state}}</b></span>
-        <span *ngIf="openedCertificate.state == 'REVOKED'" style="color: red;"><b>{{openedCertificate.state}}</b></span>
+        <span *ngIf="openedCertificate.state == 'REVOKED' || openedCertificate.state == 'EXPIRED'" style="color: red;"><b>{{openedCertificate.state}}</b></span>
       </h6>
       <h6>Public key: <span><pre>{{openedCertificate.publicKey}}</pre></span></h6>
       <br>

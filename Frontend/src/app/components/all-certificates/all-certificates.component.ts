@@ -35,9 +35,16 @@ export class AllCertificatesComponent implements OnInit {
       this.certificatesChain = data;
       this.chain = [];
       var label = "";
+      var size = this.certificatesChain.length;
       for(let p of this.certificatesChain){
-        label = p.owner + " [" + p.serialNumber + "]";
+        var j = '';
+        for(var i=0; i<size; i++){
+          j += "-";
+        }
+        label = j + " " + p.owner + " [" + p.serialNumber + "]";
         this.chain.push(label);
+        console.log(label)
+        size--;
       }
       this.chain.reverse();
     });
