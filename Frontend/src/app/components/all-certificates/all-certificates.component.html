@@ -27,16 +27,30 @@
 </table>
 <div class="page" *ngIf="seeDetails">
   <div class="form">
-    <form class="ngform">
-        <h4>Public key:</h4>
-        <pre>{{publicKey}}</pre>
-        <br>
-        <h4>Certificate chain: </h4>
-            <div *ngFor="let cer of chain; let i = index;">
-              <li style="list-style-type: none;font-size: 18px;">{{cer}}</li>
-            </div>
-            <br>
-        <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
+    <form class="ngform" style="text-align: left;width: 1000px;">
+      <h4>Certificate details: </h4>
+      <h6>Certificate type: <span>{{openedCertificate.certificateType}}</span></h6>
+      <h6>Certificate owner: <span>{{openedCertificate.owner}}</span></h6>
+      <h6>Serial number: <span>{{openedCertificate.serialNumber}}</span></h6>
+      <hr>
+      <h4>Certificate issuer: </h4>
+      <h6>Issuer owner: <span>{{openedCertificate.issuerName}}</span></h6>
+      <h6>Issuer serial number: <span>{{openedCertificate.issuerSerial}}</span></h6>
+      <br>
+      <h6>Validation period: <span>{{openedCertificate.validFrom | date:'longDate'}}  -  {{openedCertificate.validTo | date:'longDate'}}</span></h6>
+      <h6>STATE: <span *ngIf="openedCertificate.state == 'VALID'"><b>{{openedCertificate.state}}</b></span>
+        <span *ngIf="openedCertificate.state == 'REVOKED'" style="color: red;"><b>{{openedCertificate.state}}</b></span>
+      </h6>
+      <h6>Public key: <span><pre>{{openedCertificate.publicKey}}</pre></span></h6>
+      <br>
+      <hr>
+      <h4>Certificate chain: </h4>
+      <div *ngFor="let cer of chain; let i = index;">
+        <li style="list-style-type: none;font-size: 18px;">{{cer}}</li>
+      </div>
+      <br>
+      <br>
+      <button class="btn btn-secondary" (click)="cancel()">Cancel</button>
     </form>
 
   </div>

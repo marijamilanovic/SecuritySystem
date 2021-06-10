@@ -35,7 +35,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
     public boolean isCertificateValid(Long serialNumber) {
         Certificate certificate = certificateService.getCertificateBySerialNumber(serialNumber);
         if (certificate != null){
-            if(checkDate(certificate.getValidFrom(), certificate.getValidTo()) && isNotRevoked(certificate) && checkCertificateChain(certificate)){
+            if(checkDate(certificate.getValidFrom(), certificate.getValidTo(), false) && isNotRevoked(certificate) && checkCertificateChain(certificate)){
                 return true;
             }
             return false;
@@ -55,10 +55,15 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         return false;
     }
 
-    public boolean checkDate(Date validFrom, Date validTo){
+    public boolean checkDate(Date validFrom, Date validTo, boolean isNew){
         long current = new Date().getTime();
-        return validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
+        if(isNew){
+            return validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
+        }
+        return validFrom.getTime() <= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime();
     }
+
+
     
 
     public boolean checkNewCertificateChain(RequestCertificateDto requestCertificateDto){
@@ -127,9 +132,9 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         Date validTo = requestCertificateDto.getCertificateDto().getValidTo();
         CertificateType certificateType = requestCertificateDto.getCertificateDto().getCertificateType();
         Certificate issuerCertificate = certificateService.getCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial());
-        if(checkDate(validFrom, validTo) && certificateType == CertificateType.ROOT){
+        if(checkDate(validFrom, validTo, true) && certificateType == CertificateType.ROOT){
             return true;
-        }else if(certificateType != CertificateType.ROOT && checkDate(validFrom, validTo) && validFrom.after(issuerCertificate.getValidFrom()) &&
+        }else if(certificateType != CertificateType.ROOT && checkDate(validFrom, validTo, true) && validFrom.after(issuerCertificate.getValidFrom()) &&
                 validTo.before(issuerCertificate.getValidTo())){
             return true;
         }

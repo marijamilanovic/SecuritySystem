@@ -15,6 +15,7 @@ export class AllCertificatesComponent implements OnInit {
   certificatesChain: any[]=[];
   reverseChain: any[]=[];
   chain: any[]=[];
+  openedCertificate: any;
 
   constructor(private certificateService: CertificateService) { }
 
@@ -28,10 +29,10 @@ export class AllCertificatesComponent implements OnInit {
   details(i: any, c: any){
     this.reverseChain = [];
     this.publicKey = this.certificates[i].publicKey;
+    this.openedCertificate = this.certificates[i];
     this.seeDetails = true;
     this.certificateService.viewChain(c.serialNumber).subscribe((data: any) => {
       this.certificatesChain = data;
-      console.log(this.certificatesChain);
       this.chain = [];
       var label = "";
       for(let p of this.certificatesChain){
@@ -39,8 +40,6 @@ export class AllCertificatesComponent implements OnInit {
         this.chain.push(label);
       }
       this.chain.reverse();
-      console.log(this.chain);
-
     });
   }
 
