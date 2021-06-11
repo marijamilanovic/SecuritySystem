@@ -114,7 +114,7 @@ export class AddCertificateComponent implements OnInit {
           this.router.navigate(['allCertificates']);
         });
      }, (err: any)=>{
-        this.toastrService.error(err.error.text);
+        this.toastrService.error(err.error);
      })
   }
 
@@ -125,7 +125,8 @@ export class AddCertificateComponent implements OnInit {
         this.router.navigate(['allCertificates']);
       }); 
      }, (err: any)=>{
-      this.toastrService.error(err.error.text);
+       console.log(err);
+      this.toastrService.error(err.error);
      })
   }
 
@@ -136,7 +137,7 @@ export class AddCertificateComponent implements OnInit {
           this.router.navigate(['allCertificates']);
         });
      }, (err: any)=>{
-        this.toastrService.error(err.error.text);
+        this.toastrService.error(err.error);
      })
   }
 

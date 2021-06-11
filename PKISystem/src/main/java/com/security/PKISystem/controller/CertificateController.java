@@ -33,15 +33,15 @@ public class CertificateController {
         return certificateService.getCertificateChain(serialNumber);
     }
 
-    @PreAuthorize("hasAuthority('GENERATE_ROOT')")
+    //@PreAuthorize("hasAuthority('GENERATE_ROOT')")
     @PostMapping("/root")
     public ResponseEntity generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return certificateService.addRootCertificate(certificate);
     }
 
-    @PreAuthorize("hasAuthority('GENERATE_CERT')")
+    //@PreAuthorize("hasAuthority('GENERATE_CERT')")
     @PostMapping
-    public ResponseEntity<X509Certificate> generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
+    public ResponseEntity generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
         return certificateService.addCertificate(requestCertificateDto);
     }
 

@@ -81,6 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/certificate/states",
                 "/certificate/types");
         web.ignoring().antMatchers(HttpMethod.POST,
-                "/user/register");
+                "/user/register",
+                "/certificate/**");
     }
 }

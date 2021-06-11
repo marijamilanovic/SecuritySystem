@@ -108,7 +108,7 @@ public class CertificateServiceImpl implements CertificateService {
         keyStoreWriter.saveKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
         log.info("Saved keys for certificate with serial number: " + certForDatabase.getSerialNumber());
 
-        return new ResponseEntity(certificate, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CertificateServiceImpl implements CertificateService {
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
         }
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.OK);
+            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
@@ -155,7 +155,7 @@ public class CertificateServiceImpl implements CertificateService {
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
 
-        return new ResponseEntity(certificate, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Override
