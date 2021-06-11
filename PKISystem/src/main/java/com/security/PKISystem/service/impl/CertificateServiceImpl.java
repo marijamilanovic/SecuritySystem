@@ -23,6 +23,7 @@ import java.io.File;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -55,6 +56,12 @@ public class CertificateServiceImpl implements CertificateService {
         if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
         }
+
+        // check input format
+        if(!checkName(requestCertificateDto)){
+            return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
+        }
+
         // check date, if it's revoked and check certificate chain
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
@@ -117,13 +124,17 @@ public class CertificateServiceImpl implements CertificateService {
         if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
         }
+
+        if(!checkName(requestCertificateDto)){
+            return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
+        }
+
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
-        // TODO: ispraviti keystore password
-        //String pass = "ftn";
+
         if(f.exists() && !f.isDirectory()) {
             keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
         } else {
@@ -151,11 +162,27 @@ public class CertificateServiceImpl implements CertificateService {
 
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
+        log.info("Certificate with serial number : " + certificateForDatabase.getSerialNumber() + " has been generated.");
 
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
+        log.info("Saved keys for certificate with serial number: " + certificateForDatabase.getSerialNumber());
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private boolean checkName(RequestCertificateDto requestCertificateDto) {
+        Pattern patternFullName = Pattern.compile("^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$");
+        if(patternFullName.matcher(requestCertificateDto.getIssuedToCommonName()).matches() &&
+                patternFullName.matcher(requestCertificateDto.getSurname()).matches() &&
+                patternFullName.matcher(requestCertificateDto.getGivenName()).matches() &&
+                patternFullName.matcher(requestCertificateDto.getOrganisation()).matches() &&
+                patternFullName.matcher(requestCertificateDto.getCountry()).matches()){
+            log.info("Input is in valid format.");
+            return true;
+        }
+        log.error("Input isn't in valid format.");
+        return false;
     }
 
     @Override

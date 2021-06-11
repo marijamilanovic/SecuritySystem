@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CertificateService } from 'src/app/service/certificate.service';
 import {Observable} from 'rxjs';
 import {debounceTime, distinctUntilChanged, map} from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-validation-certificate',
@@ -16,7 +17,7 @@ export class ValidationCertificateComponent implements OnInit {
   certificates: any[]=[];
   isValid: number = 0;
 
-  constructor(private certificateService: CertificateService) { }
+  constructor(private certificateService: CertificateService, private toastrService: ToastrService) { }
 
   ngOnInit(): void {
     this.certificateService.getAllCertificates().subscribe((data: any[]) => {

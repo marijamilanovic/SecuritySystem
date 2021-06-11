@@ -6,7 +6,7 @@
             <div>
                 <div >
                 <select name="typeSelect" [disabled]="isChecked" [(ngModel)]="cert">
-                    <option *ngFor="let c of certificates" [ngValue]="c">{{c.owner}} [{{c.serialNumber}}] --- {{c.certificateType}}</option>
+                    <option *ngFor="let c of certificates" [ngValue]="c">{{c?.owner}} [{{c?.serialNumber}}] --- {{c?.certificateType}}</option>
                 </select>
                 </div>
                 <p style="font-size: 11px; color: red;">Subject name  [serial number]  ---  certificate type</p>
