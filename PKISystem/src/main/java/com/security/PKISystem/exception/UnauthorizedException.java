@@ -3,11 +3,12 @@ package com.security.PKISystem.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-public class AlreadyExistsException extends RuntimeException {
+@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+public class UnauthorizedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public AlreadyExistsException(String message) {
+    public UnauthorizedException(String message) {
         super(message);
     }
+
 }

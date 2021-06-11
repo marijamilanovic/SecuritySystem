@@ -11,7 +11,6 @@ import com.security.PKISystem.keystores.KeyStoreWriter;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,28 +45,37 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto) {
-        if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY)
+        // end-entity can't sign certificate
+        if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY){
+            log.warn("End-entity certificate can't sign certificate.");
             return new ResponseEntity("Issuer have no permission to sign certificate.", HttpStatus.FORBIDDEN);
+        }
+        // start date if it's today -> add current time
         long validFrom = requestCertificateDto.getCertificateDto().getValidFrom().getTime();
         if(new Date().getTime() - validFrom < 86400000 && new Date().getTime() - validFrom > 0){
             requestCertificateDto.getCertificateDto().setValidFrom(new Date());
-            System.out.println(requestCertificateDto.getCertificateDto().getValidFrom());
         }
-        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
-            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.OK);
+        // check date, if it's revoked and check certificate chain
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
+            return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
+        }
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         String keyStore = certificateValidationService.getCertificateKeyStore(requestCertificateDto.getCertificateDto().getCertificateType());
 
         File f = new File(keyStore);
         if(f.exists() && !f.isDirectory()) {
+            log.info("Load keystore.");
             keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
         }else{
+            log.info("Create and load keystore.");
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
         KeyPair keyPairSubject = generateKeyPair();
+        log.info("Keys for current certificate has been generated.");
         Long serial = generateSerialNumber();
+        log.info("Serial number for certificate has been generated: " + serial);
 
         Certificate certForDatabase = new Certificate(
                 serial,
@@ -80,7 +88,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getCertificateType(),
                 State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
-        log.info("Save certificate: " + certForDatabase.getSerialNumber());
+        log.info("Save certificate in database: " + certForDatabase.getSerialNumber());
         this.certificateRepository.save(certForDatabase);
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
@@ -94,9 +102,11 @@ public class CertificateServiceImpl implements CertificateService {
 
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
+        log.info("Certificate with serial number : " + certForDatabase.getSerialNumber() + " has been generated.");
 
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
+        log.info("Saved keys for certificate with serial number: " + certForDatabase.getSerialNumber());
 
         return new ResponseEntity(certificate, HttpStatus.OK);
     }
@@ -113,11 +123,11 @@ public class CertificateServiceImpl implements CertificateService {
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
         // TODO: ispraviti keystore password
-        String pass = "ftn";
+        //String pass = "ftn";
         if(f.exists() && !f.isDirectory()) {
-            keyStoreWriter.loadKeyStore(rootKSPath, pass.toCharArray());
+            keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
         } else {
-            keyStoreWriter.loadKeyStore(null, pass.toCharArray());
+            keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
         KeyPair keyPairSubject = generateKeyPair();
@@ -160,13 +170,8 @@ public class CertificateServiceImpl implements CertificateService {
         return certificateRepository.findCertificateBySerialNumber(serialNumber);
     }
 
-    @Override
-    public Certificate getCertificateBySerialNumberAndIssuerId(Long serialNumber, Long issuerId) {
-        log.info("Try to find certificate with serial number: " + serialNumber +", and issuer id: "+ issuerId);
-        return certificateRepository.findCertificateBySerialNumberAndIssuerSerial(serialNumber, issuerId);
-    }
 
-    // TODO: mora se promeniti stanje i u keystore
+
     @Override
     public List<CertificateDto> findAll() {
         List<CertificateDto> certificateDtos = new ArrayList<>();

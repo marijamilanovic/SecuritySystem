@@ -1,12 +1,11 @@
 package com.security.PKISystem.controller;
 
-import com.security.PKISystem.domain.Certificate;
 import com.security.PKISystem.domain.dto.CertificateDto;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.cert.X509Certificate;
@@ -22,14 +21,7 @@ public class CertificateController {
 
 
     @GetMapping
-    public List<CertificateDto> getAllCertificates(){
-        return certificateService.findAll();
-    }
-
-    @GetMapping("/{serialNumber}")
-    public Certificate getCertificateBySerialNumberAndIssuerSerial(@PathVariable Long serialNumber, @PathVariable Long issuerId){
-        return certificateService.getCertificateBySerialNumberAndIssuerId(serialNumber, issuerId);
-    }
+    public List<CertificateDto> getAllCertificates(){ return certificateService.findAll(); }
 
     @GetMapping("/issuers")
     public List<CertificateDto> getValidIssuers(){
@@ -41,16 +33,19 @@ public class CertificateController {
         return certificateService.getCertificateChain(serialNumber);
     }
 
+    @PreAuthorize("hasAuthority('GENERATE_ROOT')")
     @PostMapping("/root")
     public ResponseEntity generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return certificateService.addRootCertificate(certificate);
     }
 
+    @PreAuthorize("hasAuthority('GENERATE_CERT')")
     @PostMapping
     public ResponseEntity<X509Certificate> generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
         return certificateService.addCertificate(requestCertificateDto);
     }
 
+    @PreAuthorize("hasAuthority('REVOKE_CERT')")
     @DeleteMapping("/revoke/{serialNumber}")
     public void revokeCertificate(@PathVariable Long serialNumber){
         certificateService.revokeCertificateChain(serialNumber);
