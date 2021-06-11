@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/download/{id}").permitAll()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/user/login").permitAll()
+                .antMatchers("/request/**").permitAll()
                 .antMatchers("/certificate/**").permitAll() // TODO: Change when front login added
                 // Every other request needs Authorisation
                 .anyRequest().authenticated()
