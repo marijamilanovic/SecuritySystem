@@ -1,0 +1,17 @@
+<div class="page">
+    <div class="form">
+        <form class="ngform" style="width: 600px; margin-top: 150px;">
+            <h2><b>Register</b></h2>
+            <p><i>Just one step away!</i></p>
+            <br>
+            <input type="text" placeholder="Username" [(ngModel)]="registrationDto.username" id="username" name="username" style="width: 400px" required>
+            <input type="email" placeholder="Email address" [(ngModel)]="registrationDto.email" id="email" name="email" style="width: 400px" required>
+            <input type="password" placeholder="Password" [(ngModel)]="registrationDto.password" id="pass" name="pass" style="width: 400px" required>
+            <input type="password" placeholder="Repeat password" [(ngModel)]="registrationDto.passwordRepeat" id="passRepeat" name="passRepeat" style="width: 400px" required>
+            <br><br>
+            <button class="btn btn-warning" style="width: 400px" (click) = "register()">Register</button>
+            <br>
+            <a href="#" [routerLink]="'/login'">Already have an account? Sign in!</a>
+        </form>
+    </div>
+</div>

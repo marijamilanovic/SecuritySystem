@@ -16,6 +16,8 @@ import { AddCertificateComponent } from './components/add-certificate/add-certif
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ValidationCertificateComponent } from './components/validation-certificate/validation-certificate.component';
 import { AllCertificatesComponent } from './components/all-certificates/all-certificates.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { AllCertificatesComponent } from './components/all-certificates/all-cert
     NavbarComponent,
     ValidationCertificateComponent,
     AllCertificatesComponent,
+    LoginComponent,
+    RegistrationComponent,
   ],
   imports: [
     BrowserModule,
