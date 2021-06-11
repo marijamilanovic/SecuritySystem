@@ -1,4 +1,4 @@
-export const BACKEND_PATH ='http://localhost:5051';
+export const BACKEND_PATH ='https://localhost:5051';
 
 export const CERTIFICATE_PATH = BACKEND_PATH + '/certificate';
 export const CERTIFICATE_TYPES_PATH = CERTIFICATE_PATH + '/types';

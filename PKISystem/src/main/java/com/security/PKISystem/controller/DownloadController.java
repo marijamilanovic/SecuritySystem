@@ -8,7 +8,7 @@ import java.io.File;
 
 @RestController
 @RequestMapping("/download")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 public class DownloadController {
     @Autowired
     private DownloadService downloadService;

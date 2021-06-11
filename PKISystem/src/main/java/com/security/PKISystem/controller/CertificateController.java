@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/certificate")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://localhost:4200")
 public class CertificateController {
 
     @Autowired

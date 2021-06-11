@@ -1,0 +1,54 @@
+2021-06-11 12:19:11.562  INFO 10448 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2021-06-11 12:19:11.578  INFO 10448 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2021-06-11 12:19:11.578  INFO 10448 --- [main] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2021-06-11 12:19:11.609 ERROR 10448 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'; nested exception is org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat server
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:181) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.context.support.DefaultLifecycleProcessor.access$200(DefaultLifecycleProcessor.java:54) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:356) ~[spring-context-5.3.5.jar:5.3.5]
+	at java.lang.Iterable.forEach(Iterable.java:75) ~[na:1.8.0_281]
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:155) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:123) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:935) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:586) ~[spring-context-5.3.5.jar:5.3.5]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:144) ~[spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:769) [spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:761) [spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:426) [spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:326) [spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1313) [spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1302) [spring-boot-2.4.4.jar:2.4.4]
+	at com.security.PKISystem.PkiSystemApplication.main(PkiSystemApplication.java:10) [classes/:na]
+Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat server
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:229) ~[spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.web.servlet.context.WebServerStartStopLifecycle.start(WebServerStartStopLifecycle.java:43) ~[spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:178) ~[spring-context-5.3.5.jar:5.3.5]
+	... 15 common frames omitted
+Caused by: java.lang.IllegalArgumentException: standardService.connector.startFailed
+	at org.apache.catalina.core.StandardService.addConnector(StandardService.java:244) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.addPreviouslyRemovedConnectors(TomcatWebServer.java:282) ~[spring-boot-2.4.4.jar:2.4.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:213) ~[spring-boot-2.4.4.jar:2.4.4]
+	... 17 common frames omitted
+Caused by: org.apache.catalina.LifecycleException: Protocol handler start failed
+	at org.apache.catalina.connector.Connector.startInternal(Connector.java:1075) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:183) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.catalina.core.StandardService.addConnector(StandardService.java:240) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	... 19 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Alias name [254151565] does not identify a key entry
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.createSSLContext(AbstractJsseEndpoint.java:99) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.initialiseSsl(AbstractJsseEndpoint.java:71) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.NioEndpoint.bind(NioEndpoint.java:258) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.AbstractEndpoint.bindWithCleanup(AbstractEndpoint.java:1204) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.AbstractEndpoint.start(AbstractEndpoint.java:1290) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.coyote.AbstractProtocol.start(AbstractProtocol.java:614) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.catalina.connector.Connector.startInternal(Connector.java:1072) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	... 21 common frames omitted
+Caused by: java.io.IOException: Alias name [254151565] does not identify a key entry
+	at org.apache.tomcat.util.net.SSLUtilBase.getKeyManagers(SSLUtilBase.java:336) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.SSLUtilBase.createSSLContext(SSLUtilBase.java:246) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.createSSLContext(AbstractJsseEndpoint.java:97) ~[tomcat-embed-core-9.0.44.jar:9.0.44]
+	... 27 common frames omitted
+
