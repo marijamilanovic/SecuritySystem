@@ -16,6 +16,4 @@ public class CertificateValidationController {
     public boolean isCertificateValid(@PathVariable Long serialNumber){
         return certificateValidationService.isCertificateValid(serialNumber);
     }
-
-
 }

@@ -5,6 +5,7 @@ import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.cert.X509Certificate;
@@ -32,16 +33,19 @@ public class CertificateController {
         return certificateService.getCertificateChain(serialNumber);
     }
 
+    @PreAuthorize("hasAuthority('GENERATE_ROOT')")
     @PostMapping("/root")
     public ResponseEntity generateRootCertificate(@RequestBody RequestCertificateDto certificate){
         return certificateService.addRootCertificate(certificate);
     }
 
+    @PreAuthorize("hasAuthority('GENERATE_CERT')")
     @PostMapping
     public ResponseEntity<X509Certificate> generateCertificate(@RequestBody RequestCertificateDto requestCertificateDto)  {
         return certificateService.addCertificate(requestCertificateDto);
     }
 
+    @PreAuthorize("hasAuthority('REVOKE_CERT')")
     @DeleteMapping("/revoke/{serialNumber}")
     public void revokeCertificate(@PathVariable Long serialNumber){
         certificateService.revokeCertificateChain(serialNumber);
