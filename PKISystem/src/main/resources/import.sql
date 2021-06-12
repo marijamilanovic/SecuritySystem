@@ -1,5 +1,6 @@
 insert into role (id, name) values (1, "ROLE_USER");
 insert into role (id, name) values (2, "ROLE_ADMIN");
+insert into role (id, name) values (3, "ROLE_CA");
 
 insert into permission (id, name) values (10, 'GENERATE_CERT');
 insert into permission (id, name) values (11, 'GENERATE_ROOT');
@@ -7,15 +8,19 @@ insert into permission (id, name) values (12, 'REVOKE_CERT');
 insert into permission (id, name) values (13, 'ALL_REQUESTS');
 insert into permission (id, name) values (14, 'USER_REQUESTS');
 insert into permission (id, name) values (15, 'GET_REQUEST');
+insert into permission (id, name) values (16, 'GET_USERS');
 
 
 insert into role_permission (role_id, permission_id) values (2, 10);
+insert into role_permission (role_id, permission_id) values (3, 10);
 insert into role_permission (role_id, permission_id) values (2, 11);
 insert into role_permission (role_id, permission_id) values (2, 12);
+insert into role_permission (role_id, permission_id) values (3, 12);
 insert into role_permission (role_id, permission_id) values (2, 13);
 insert into role_permission (role_id, permission_id) values (1, 14);
 insert into role_permission (role_id, permission_id) values (1, 15);
 insert into role_permission (role_id, permission_id) values (2, 15);
+insert into role_permission (role_id, permission_id) values (3, 15);
 
 
 insert into users (id, username, email, password) values (100, 'gojko', 'gojko@mailinator.com', '$2a$10$fBKaq1pRKSeax3VDe31mve2eWVLo0GvhD1DzmuPosE.ucsvMZ/0XK');

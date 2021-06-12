@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CERTIFICATE_CHAIN_PATH, CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CERTIFICATE_TYPES_PATH, CERTIFICATE_VALIDATION_PATH, PDF_PATH, ROOT_PATH, REVOKE_PATH  } from '../util/paths';
+import { getToken } from '../util/tokenUtil';
 
 
 
@@ -10,6 +11,11 @@ import { CERTIFICATE_CHAIN_PATH, CERTIFICATE_ISSUERS_PATH, CERTIFICATE_PATH, CER
 export class CertificateService {
 
   constructor(private httpClient: HttpClient) { }
+
+  createAuthorizationHeader() {
+    return 'Bearer ' + getToken(); 
+  }
+
 
   getAllCertificates():any{
     return this.httpClient.get(CERTIFICATE_PATH);
@@ -28,18 +34,18 @@ export class CertificateService {
   }
 
   createRootCertificate(certificate: any): any{
-    return this.httpClient.post(ROOT_PATH, certificate);
+    return this.httpClient.post(ROOT_PATH, certificate, {headers: {Authorization: this.createAuthorizationHeader()}});
   }
 
   createIntermediateCertificate(certificate: any): any{
-    return this.httpClient.post(CERTIFICATE_PATH, certificate);
+    return this.httpClient.post(CERTIFICATE_PATH, certificate, {headers: {Authorization: this.createAuthorizationHeader()}});
   }
 
   createEndEntityCertificate(certificate: any): any{
-    return this.httpClient.post(CERTIFICATE_PATH, certificate);
+    return this.httpClient.post(CERTIFICATE_PATH, certificate, {headers: {Authorization: this.createAuthorizationHeader()}});
   }
 
-  generatePdf(id: any): any{
+  downloadCert(id: any): any{
     return this.httpClient.get(PDF_PATH + "/" + id);
   }
 
@@ -49,7 +55,7 @@ export class CertificateService {
   }
 
   revokeCertificate(serialNumber: number){
-    return this.httpClient.delete(REVOKE_PATH + "/" + serialNumber);
+    return this.httpClient.delete(REVOKE_PATH + "/" + serialNumber, {headers: {Authorization: this.createAuthorizationHeader()}});
   }
 
 }

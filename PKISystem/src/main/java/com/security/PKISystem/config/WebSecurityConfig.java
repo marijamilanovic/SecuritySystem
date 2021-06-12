@@ -62,8 +62,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/download/{id}").permitAll()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/user/login").permitAll()
-                .antMatchers("/request/**").permitAll()
-                .antMatchers("/certificate/**").permitAll() // TODO: Change when front login added
+                .antMatchers("/certificate").permitAll()
+                .antMatchers("/certificate/issuers").permitAll()
+                .antMatchers("/chain/{serialNumber}").permitAll()
                 // Every other request needs Authorisation
                 .anyRequest().authenticated()
                 // Enable CORS layer (WebMvcConfig class)
@@ -83,6 +84,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/certificate/types");
         web.ignoring().antMatchers(HttpMethod.POST,
                 "/user/register",
-                "/certificate/**");
+                "/request");
     }
 }

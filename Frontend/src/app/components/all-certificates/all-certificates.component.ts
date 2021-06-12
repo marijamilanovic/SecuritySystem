@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { CertificateService } from 'src/app/service/certificate.service';
+import { getRoleFromToken } from 'src/app/util/tokenUtil';
+
 
 @Component({
   selector: 'app-all-certificates',
@@ -17,7 +19,8 @@ export class AllCertificatesComponent implements OnInit {
   chain: any[]=[];
   openedCertificate: any;
 
-  constructor(private certificateService: CertificateService) { }
+  constructor(private certificateService: CertificateService,
+              private toastrService: ToastrService) { }
 
   ngOnInit(): void {
     this.certificateService.getAllCertificates().subscribe((listCertificate:any) => {
@@ -51,8 +54,10 @@ export class AllCertificatesComponent implements OnInit {
   }
 
   download(i: any){
-    this.certificateService.generatePdf(this.certificates[i].id).subscribe((response: any) =>{
-      alert("Generated file");
+    this.certificateService.downloadCert(this.certificates[i].id).subscribe((response: any) =>{
+      this.toastrService.success("Cerificate downloaded. Check your Documents folder");
+    }, () => {
+      this.toastrService.error("Something went wrong, try again later!");
     })
     this.seeDetails = false;
   }
@@ -63,10 +68,15 @@ export class AllCertificatesComponent implements OnInit {
 
   revoke(i: any){
     this.certificateService.revokeCertificate(this.certificates[i].serialNumber).subscribe(() =>{
-      alert("Certificate with serial:" + this.certificates[i].serialNumber + " has been revocated");
+      this.toastrService.success("Certificate with serial:" + this.certificates[i].serialNumber + " has been revocated");
+      window.location.reload();
     }, error => {
-      alert("Something went wrong!");
+      this.toastrService.error("Something went wrong, try again later!");
     });
+  }
+
+  getRole(){
+    return getRoleFromToken();
   }
 
 }

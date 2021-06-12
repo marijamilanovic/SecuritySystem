@@ -1,11 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {NgbDate, NgbCalendar, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDate, NgbCalendar, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { CertificateRequestService } from 'src/app/service/certificate-request.service';
 import { CertificateService } from 'src/app/service/certificate.service';
-import { getUsernameFromToken } from 'src/app/util/tokenUtil';
+import { getRoleFromToken, getUsernameFromToken } from 'src/app/util/tokenUtil';
 
 @Component({
   selector: 'app-request-certificate',
@@ -58,6 +58,8 @@ export class RequestCertificateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if(getRoleFromToken() == 'ROLE_ADMIN')
+      window.history.back();
     this.certificateService.getAllIssuers().subscribe((data: any[]) => {
       this.issuers = data;
     });

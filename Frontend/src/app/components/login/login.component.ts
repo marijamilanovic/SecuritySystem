@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/service/user.service';
-import { saveToken } from 'src/app/util/tokenUtil';
+import { getUsernameFromToken, saveToken } from 'src/app/util/tokenUtil';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +18,8 @@ export class LoginComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    if(getUsernameFromToken() != null)
+      this.router.navigate(['/allCertificates'])
   }
 
   login(){

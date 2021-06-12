@@ -1,5 +1,6 @@
 package com.security.PKISystem.security;
 
+import com.security.PKISystem.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -41,6 +42,16 @@ public class JwtService {
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_PERIOD))
+                .signWith(SignatureAlgorithm.HS256, KEY).compact();
+    }
+
+    public String createToken(String username, Role role) {
+        return Jwts.builder()
+                .setIssuer(APP_NAME)
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_PERIOD))
+                .claim("role", role.getName())
                 .signWith(SignatureAlgorithm.HS256, KEY).compact();
     }
 

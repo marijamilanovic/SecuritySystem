@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { UserService } from 'src/app/service/user.service';
+import { getUsernameFromToken } from 'src/app/util/tokenUtil';
 
 @Component({
   selector: 'app-registration',
@@ -17,6 +18,8 @@ export class RegistrationComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    if(getUsernameFromToken() != null)
+      this.router.navigate(['/allCertificates']);
   }
 
   register(){

@@ -5,19 +5,27 @@
         </a>
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-                <a class="nav-link" [routerLink]="'/addCertificate'" routerLinkActive="active">Create certificate</a>
+                <a class="nav-link" *ngIf="getRole() == 'ROLE_ADMIN'" [routerLink]="'/addCertificate'" routerLinkActive="active">Create certificate</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" [routerLink]="'/request'" routerLinkActive="active">Create certificate request</a>
+                <a class="nav-link" *ngIf="getRole() != 'ROLE_ADMIN'" [routerLink]="'/request'" routerLinkActive="active">Create certificate request</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" [routerLink]="'/allCertificates'" routerLinkActive="active">All certificates</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" [routerLink]="'/requests'" routerLinkActive="active">Certificate requests</a>
+                <a class="nav-link" *ngIf="getRole() == 'ROLE_ADMIN'" [routerLink]="'/requests'" routerLinkActive="active">Certificate requests</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" [routerLink]="'/validationCertificate'" routerLinkActive="active">Certificate checker</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav my-2 my-lg-0">
+            <li class="nav-item">
+                <a (click)="logout()" *ngIf="getUsername() != null" class="nav-link">Logout</a>
+            </li>
+            <li class="nav-item">
+                <a *ngIf="getUsername() == null" class="nav-link" [routerLink]="'/login'" routerLinkActive="active">Login</a>
             </li>
         </ul>
     </div>

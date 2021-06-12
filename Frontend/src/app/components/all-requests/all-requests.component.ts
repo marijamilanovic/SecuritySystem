@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { CertificateRequestService } from 'src/app/service/certificate-request.service';
+import { getRoleFromToken } from 'src/app/util/tokenUtil';
 
 @Component({
   selector: 'app-all-requests',
@@ -20,6 +21,8 @@ export class AllRequestsComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    if(getRoleFromToken() != 'ROLE_ADMIN' && getRoleFromToken() != 'ROLE_CA')
+      window.history.back();
     this.requestService.getAllRequests().subscribe((data : any) => {
       this.requests = data;
     }, error => {

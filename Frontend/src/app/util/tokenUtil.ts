@@ -27,3 +27,11 @@ export function getUsernameFromToken() {
     }
     return parsedToken.sub;
 }
+
+export function getRoleFromToken(){
+    let parsedToken=getParsedToken();
+    if(parsedToken == null){
+        return null;
+    }
+    return parsedToken.role;
+}

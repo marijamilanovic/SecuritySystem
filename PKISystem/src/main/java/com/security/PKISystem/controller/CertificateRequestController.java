@@ -24,26 +24,26 @@ public class CertificateRequestController {
     @Autowired
     private CertificateValidationService validationService;
 
-//    @PreAuthorize("hasAuthority('ALL_REQUESTS')")
+    @PreAuthorize("hasAuthority('ALL_REQUESTS')")
     @GetMapping
-    private List<CertificateRequestDto> getAllRequests(){
+    public List<CertificateRequestDto> getAllRequests(){
         return CertificateRequestMapper.mapRequestsToRequestDtos(requestService.findAll());
     }
 
-//    @PreAuthorize("hasAuthority('USER_REQUESTS')")
+    @PreAuthorize("hasAuthority('USER_REQUESTS')")
     @GetMapping("/user/{username}")
-    private List<CertificateRequestDto> getUserRequests(@PathVariable String username){
+    public List<CertificateRequestDto> getUserRequests(@PathVariable String username){
         return CertificateRequestMapper.mapRequestsToRequestDtos(requestService.findRequestsByUserUsername(username));
     }
 
-//    @PreAuthorize("hasAuthority('GET_REQUEST')")
+    @PreAuthorize("hasAuthority('GET_REQUEST')")
     @GetMapping("/{id}")
-    private CertificateRequestDto getRequestById(@PathVariable Long id){
+    public CertificateRequestDto getRequestById(@PathVariable Long id){
         return CertificateRequestMapper.mapRequestToRequestDto(requestService.findRequestById(id));
     }
 
     @PostMapping
-    private void createRequest(@RequestBody CertificateRequestDto requestDto){
+    public void createRequest(@RequestBody CertificateRequestDto requestDto){
         CertificateRequest c = CertificateRequestMapper.mapRequestDtoToRequest(requestDto);
         c.setUser(userService.findByUsername(requestDto.getUsername()));
         if(!validationService.isNewCertificateValid(CertificateRequestMapper.mapCertificateRequestDtoToRequestCertificateDto(requestDto)))

@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username);
         if(user == null || !passwordEncoder.matches(password, user.getPassword()))
             throw new BadRequestException("Username or password is incorrect!");
-        return jwtService.createToken(user.getUsername());
+        return jwtService.createToken(user.getUsername(), user.getRoles().get(0));
     }
 
     private void verifyUserInput(UserRegisterDto registerDto){
