@@ -6,7 +6,6 @@ import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 @Service

@@ -1,1 +1,108 @@
-<p>request-certificate works!</p>
+<div class="page">
+    <div class="form">
+        <form class="ngform"  #addCertForm = "ngForm" style="width: 600px">
+            <h3>Create certificate request</h3>
+            <br>
+            <!-- Common name -->
+            <div>
+                <input type="text" placeholder="Common name" [(ngModel)]="certificateRequest.commonName" id="commonname" name="commonname" style="width: 300px" required
+                #commonname="ngModel" [class.is-invalid] = "commonname.invalid && commonname.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="commonname.errors && (commonname.invalid && commonname.touched)">
+                    <small class="text-danger" *ngIf="commonname.errors.required">Common name is required field.</small>
+                    <small class="text-danger" *ngIf="commonname.errors.pattern">Common name must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Surname -->
+            <div>
+                <input type="text" placeholder="Surname" [(ngModel)]="certificateRequest.surname" id="surname" name="name" style="width: 300px" required
+                #surname="ngModel" [class.is-invalid] = "surname.invalid && surname.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="surname.errors && (surname.invalid && surname.touched)">
+                    <small class="text-danger" *ngIf="surname.errors.required">Surname is required field.</small>
+                    <small class="text-danger" *ngIf="surname.errors.pattern">Surname must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Given name -->
+            <div>
+                <input type="text" placeholder="Given name" [(ngModel)]="certificateRequest.givenName" id="givenName" name="givenname" style="width: 300px" required
+                #givenName="ngModel" [class.is-invalid] = "givenName.invalid && givenName.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="givenName.errors && (givenName.invalid && givenName.touched)">
+                    <small class="text-danger" *ngIf="givenName.errors.required">Given name is required field.</small>
+                    <small class="text-danger" *ngIf="givenName.errors.pattern">Given name must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Name of organisation -->
+            <div>
+                <input type="text" placeholder="Name of organisation" [(ngModel)]="certificateRequest.organisation" id="organisation" name="organisation" style="width: 300px" required
+                #organisation="ngModel" [class.is-invalid] = "organisation.invalid && organisation.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="organisation.errors && (organisation.invalid && organisation.touched)">
+                    <small class="text-danger" *ngIf="organisation.errors.required">Name of organisation is required field.</small>
+                    <small class="text-danger" *ngIf="organisation.errors.pattern">Name of organisation must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Organisation unit -->
+            <div>
+                <input type="text" placeholder="Organisation unit" [(ngModel)]="certificateRequest.organisationUnit" id="unit" name="organisationunit" style="width: 300px" required
+                #unit="ngModel" [class.is-invalid] = "unit.invalid && unit.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="unit.errors && (unit.invalid && unit.touched)">
+                    <small class="text-danger" *ngIf="unit.errors.required">Organisation unit is required field.</small>
+                    <small class="text-danger" *ngIf="unit.errors.pattern">Organisation unit must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Country -->
+            <div>
+                <input type="text" placeholder="Country" [(ngModel)]="certificateRequest.country" name="country" id="country" style="width: 300px" required
+                #country="ngModel" [class.is-invalid] = "country.invalid && country.touched" pattern="^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$">
+                <div *ngIf="country.errors && (country.invalid && country.touched)">
+                    <small class="text-danger" *ngIf="country.errors.required">Country is required field.</small>
+                    <small class="text-danger" *ngIf="country.errors.pattern">Country must have minimum 4 character and no numbers.</small>
+                </div>
+            </div>
+            <!-- Email -->
+            <div>
+                <input type="email" placeholder="Email" [(ngModel)]="certificateRequest.email" name="email" id="email" style="width: 300px" required
+                #email="ngModel" [class.is-invalid] = "email.invalid && email.touched" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                <div *ngIf="email.errors && (email.invalid && email.touched)">
+                    <small class="text-danger" *ngIf="email.errors.required">Email is required field.</small>
+                    <small class="text-danger" *ngIf="email.errors.pattern">Enter valid email.</small>
+                </div>
+            </div>
+            <br>
+            <hr style="border-color:yellow; border-width: 2px;">
+            <br>
+            <h5>Validation period</h5>
+            <ngb-datepicker #dp (dateSelect)="onDateSelection($event)" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden"
+            [minDate]="today">
+            </ngb-datepicker>
+            
+            <ng-template #t let-date let-focused="focused">
+              <span class="custom-day"
+                    [class.focused]="focused"
+                    [class.range]="isRange(date)"
+                    [class.faded]="isHovered(date) || isInside(date)"
+                    (mouseenter)="hoveredDate = date"
+                    (mouseleave)="hoveredDate = null">
+                {{ date.day }}
+              </span>
+            </ng-template>
+
+            <br>
+            <br>
+            <h6>Certificate authority: <input type="checkbox" [(ngModel)]="certificateRequest.isCA" (change)="certificateRequest.isCA = !certificateRequest.isCA" name="Ca" id="Ca"></h6>
+            <br>
+            <br>
+            <!-- Issuer -->
+            <h5>Issuer</h5><select name="issuerSelect" id="issuer" [(ngModel)]="issuer">
+                <option *ngFor="let issuer of issuers" [ngValue]="issuer" >{{issuer.owner}} {{issuer.serialNumber}}</option>
+            </select>
+
+            <br>
+            <hr style="border-color:yellow; border-width: 2px;">
+            <br>
+            <input type="text" placeholder="Key usage" [(ngModel)]="certificateRequest.keyUsage" name="usage" id="usage" style="width: 300px">
+
+            <br><br>
+            <button [disabled]="addCertForm.form.invalid" class="btn btn-warning" style="width: 200px" (click) = "createRequest()">Save</button>
+        </form>
+    </div>
+</div>
+

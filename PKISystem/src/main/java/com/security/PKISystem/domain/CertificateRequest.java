@@ -36,9 +36,13 @@ public class CertificateRequest {
     private String keyUsage;
     @Column
     private Boolean isCA;
+    @Column
+    private Long issuerSerial;
+    @Column
+    private RequestStatus status;
     @ManyToOne
     private User user;
-    @OneToOne()
+    @OneToOne
     private Certificate cert;
 
 }

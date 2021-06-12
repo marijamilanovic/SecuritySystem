@@ -13,7 +13,7 @@ export class AllRequestsComponent implements OnInit {
   seeDetails: boolean = false;
   requests: any[] = [];
   openedRequest: any = {commonName: '', givenName:'', surname:'', organisation: '', organisation_unit: '',
-                        country: '', email: '', validFrom:'', validTo:'', keyUsage:'' };
+                        country: '', email: '', validFrom:'', validTo:'', keyUsage:'', isCA: '' };
 
   constructor(private requestService: CertificateRequestService,
               private toastrService : ToastrService,

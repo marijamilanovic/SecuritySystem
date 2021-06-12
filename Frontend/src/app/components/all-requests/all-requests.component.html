@@ -42,7 +42,7 @@
       <h6>Type: <span *ngIf="openedRequest.isCA"><b>End entity</b></span>
                 <span *ngIf="!openedRequest.isCA" style="color: green;"><b>Certificate Authority</b></span>
       </h6>
-      <h6>Issuer: </h6>
+      <h6>Issuer: {{openedRequest.issuerSerial}}</h6>
       <br>
       <hr>
       <button class="btn btn-outline-warning" (click)="approve()">Approve request</button>

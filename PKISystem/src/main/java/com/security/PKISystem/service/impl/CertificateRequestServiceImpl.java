@@ -1,8 +1,10 @@
 package com.security.PKISystem.service.impl;
 
 import com.security.PKISystem.domain.CertificateRequest;
+import com.security.PKISystem.domain.mapper.CertificateRequestMapper;
 import com.security.PKISystem.repository.CertificateRequestRepository;
 import com.security.PKISystem.service.CertificateRequestService;
+import com.security.PKISystem.service.CertificateValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ public class CertificateRequestServiceImpl implements CertificateRequestService 
 
     @Autowired
     private CertificateRequestRepository requestRepository;
+    @Autowired
+    private CertificateValidationService validationService;
 
     @Override
     public CertificateRequest findRequestById(Long id) {

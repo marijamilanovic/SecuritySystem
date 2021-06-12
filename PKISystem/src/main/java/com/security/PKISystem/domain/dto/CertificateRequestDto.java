@@ -1,6 +1,7 @@
 package com.security.PKISystem.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.security.PKISystem.domain.RequestStatus;
 import lombok.Data;
 
 import javax.persistence.Temporal;
@@ -23,6 +24,8 @@ public class CertificateRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+02:00")
     private Date validTo;
     private String keyUsage;
+    private Long issuerSerial;
+    private RequestStatus status;
     private Boolean isCA;
     private String username;
 }

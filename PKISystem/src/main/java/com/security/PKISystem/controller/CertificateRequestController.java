@@ -3,7 +3,9 @@ package com.security.PKISystem.controller;
 import com.security.PKISystem.domain.CertificateRequest;
 import com.security.PKISystem.domain.dto.CertificateRequestDto;
 import com.security.PKISystem.domain.mapper.CertificateRequestMapper;
+import com.security.PKISystem.exception.BadRequestException;
 import com.security.PKISystem.service.CertificateRequestService;
+import com.security.PKISystem.service.CertificateValidationService;
 import com.security.PKISystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,8 @@ public class CertificateRequestController {
     private CertificateRequestService requestService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CertificateValidationService validationService;
 
 //    @PreAuthorize("hasAuthority('ALL_REQUESTS')")
     @GetMapping
@@ -42,6 +46,8 @@ public class CertificateRequestController {
     private void createRequest(@RequestBody CertificateRequestDto requestDto){
         CertificateRequest c = CertificateRequestMapper.mapRequestDtoToRequest(requestDto);
         c.setUser(userService.findByUsername(requestDto.getUsername()));
+        if(!validationService.isNewCertificateValid(CertificateRequestMapper.mapCertificateRequestDtoToRequestCertificateDto(requestDto)))
+            throw new BadRequestException("Bad dates, issuer cannot provide certificate!");
         requestService.createRequest(c);
     }
 }
