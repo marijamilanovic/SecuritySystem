@@ -8,10 +8,12 @@ import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.domain.mapper.CertificateMapper;
 import com.security.PKISystem.keystores.KeyStoreReader;
 import com.security.PKISystem.keystores.KeyStoreWriter;
+import com.security.PKISystem.logger.Logger;
 import com.security.PKISystem.repository.CertificateRepository;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.juli.logging.Log;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +27,6 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Slf4j
 @Service
 public class CertificateServiceImpl implements CertificateService {
 
@@ -48,7 +49,7 @@ public class CertificateServiceImpl implements CertificateService {
     public ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto) {
         // end-entity can't sign certificate
         if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY){
-            log.error("End-entity certificate can't sign certificate.");
+            Logger.infoMessage("End-entity certificate can't sign certificate.");
             return new ResponseEntity("Issuer have no permission to sign certificate.", HttpStatus.FORBIDDEN);
         }
         // start date if it's today -> add current time
@@ -59,13 +60,13 @@ public class CertificateServiceImpl implements CertificateService {
 
         // check input format
         if(!checkName(requestCertificateDto)){
-            log.error("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName());
+            Logger.error("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName(), requestCertificateDto.getEmail());
             return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
         }
 
         // check date, if it's revoked and check certificate chain
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
-            log.error("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.");
+            Logger.error("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.", requestCertificateDto.getEmail());
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
         }
 
@@ -74,17 +75,17 @@ public class CertificateServiceImpl implements CertificateService {
 
         File f = new File(keyStore);
         if(f.exists() && !f.isDirectory()) {
-            log.info("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType());
+            Logger.info("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType(), requestCertificateDto.getEmail());
             keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
         }else{
-            log.info("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType());
+            Logger.info("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType(), requestCertificateDto.getEmail());
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
         KeyPair keyPairSubject = generateKeyPair();
-        log.info("Keys for current certificate has been generated.");
+        Logger.infoMessage("Keys for current certificate has been generated.");
         Long serial = generateSerialNumber();
-        log.info("Serial number for certificate has been generated: " + serial);
+        Logger.infoDb("Serial number for certificate has been generated: " + serial);
 
         Certificate certForDatabase = new Certificate(
                 serial,
@@ -97,7 +98,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getCertificateType(),
                 State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
-        log.info("Save certificate in database: " + certForDatabase.getSerialNumber());
+        Logger.infoDb("Save certificate in database: " + certForDatabase.getSerialNumber());
         this.certificateRepository.save(certForDatabase);
 
         KeyStoreReader keyStoreReader = new KeyStoreReader();
@@ -111,11 +112,11 @@ public class CertificateServiceImpl implements CertificateService {
 
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
-        log.info("Certificate with serial number : " + certForDatabase.getSerialNumber() + " has been generated.");
+        Logger.infoMessage("Certificate with serial number : " + certForDatabase.getSerialNumber() + " has been generated.");
 
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
-        log.info("Saved keys for certificate with serial number: " + certForDatabase.getSerialNumber());
+        Logger.infoDb("Saved keys for certificate with serial number: " + certForDatabase.getSerialNumber());
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -128,12 +129,12 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         if(!checkName(requestCertificateDto)){
-            log.error("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName());
+            Logger.infoMessage("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName());
             return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
         }
 
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
-            log.error("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.");
+            Logger.infoMessage("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.");
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
         }
 
@@ -142,10 +143,10 @@ public class CertificateServiceImpl implements CertificateService {
         File f = new File(rootKSPath);
 
         if(f.exists() && !f.isDirectory()) {
-            log.info("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType());
+            Logger.infoMessage("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
         } else {
-            log.info("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType());
+            Logger.infoMessage("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
@@ -162,7 +163,7 @@ public class CertificateServiceImpl implements CertificateService {
                 requestCertificateDto.getCertificateDto().getValidTo(),
                 CertificateType.ROOT, State.VALID,
                 requestCertificateDto.getCertificateDto().getKeyUsage());
-        log.info("Try to save certificate:" + certificateForDatabase.getSerialNumber());
+        Logger.infoDb("Try to save certificate:" + certificateForDatabase.getSerialNumber());
         this.certificateRepository.save(certificateForDatabase);
 
         SubjectData subjectData = new SubjectData(keyPairSubject, requestCertificateDto, serial);
@@ -170,11 +171,11 @@ public class CertificateServiceImpl implements CertificateService {
 
         CertificateGenerator certificateGenerator = new CertificateGenerator();
         X509Certificate certificate = certificateGenerator.generateCertificate(subjectData, issuerData);
-        log.info("Certificate with serial number : " + certificateForDatabase.getSerialNumber() + " has been generated.");
+        Logger.infoMessage("Certificate with serial number : " + certificateForDatabase.getSerialNumber() + " has been generated.");
 
         keyStoreWriter.write(serial.toString(), keyPairSubject.getPrivate(), requestCertificateDto.getKeystorePassword().toCharArray(), certificate);
         keyStoreWriter.saveKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
-        log.info("Saved keys for certificate with serial number: " + certificateForDatabase.getSerialNumber());
+        Logger.infoMessage("Saved keys for certificate with serial number: " + certificateForDatabase.getSerialNumber());
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -188,7 +189,7 @@ public class CertificateServiceImpl implements CertificateService {
                 patternFullName.matcher(requestCertificateDto.getCountry()).matches() && checkEmail(requestCertificateDto.getEmail())){
             return true;
         }
-        log.error("Input isn't in valid format.");
+        Logger.infoMessage("Input isn't in valid format.");
         return false;
     }
 
@@ -197,7 +198,7 @@ public class CertificateServiceImpl implements CertificateService {
         if(patternEmail.matcher(email).matches()){
             return true;
         }
-        log.error("Email isn't in valid format.");
+        Logger.infoMessage("Email isn't in valid format.");
         return false;
     }
 
@@ -205,14 +206,20 @@ public class CertificateServiceImpl implements CertificateService {
 
     @Override
     public Certificate findCertificateById(Long id) {
-        log.info("Try to find certificate with id: " + id);
-        return certificateRepository.findCertificateById(id);
+        Logger.infoDb("Try to find certificate with id: " + id);
+        Certificate certificate = certificateRepository.findCertificateById(id);
+        if(certificate == null)
+            Logger.infoDb("There is no certificate with id: " + id);
+        return certificate;
     }
 
     @Override
     public Certificate getCertificateBySerialNumber(Long serialNumber){
-        log.info("Try to find certificate with serial number: " + serialNumber);
-        return certificateRepository.findCertificateBySerialNumber(serialNumber);
+        Logger.infoDb("Try to find certificate with serial number: " + serialNumber);
+        Certificate certificate = certificateRepository.findCertificateBySerialNumber(serialNumber);
+        if(certificate == null)
+            Logger.infoDb("There is no certificate with seral number: " + serialNumber);
+        return certificate;
     }
 
 

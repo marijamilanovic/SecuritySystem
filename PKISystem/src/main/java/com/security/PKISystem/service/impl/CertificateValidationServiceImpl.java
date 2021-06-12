@@ -6,6 +6,7 @@ import com.security.PKISystem.domain.State;
 import com.security.PKISystem.domain.dto.RequestCertificateDto;
 import com.security.PKISystem.exception.NotFoundException;
 import com.security.PKISystem.keystores.KeyStoreReader;
+import com.security.PKISystem.logger.Logger;
 import com.security.PKISystem.service.CertificateService;
 import com.security.PKISystem.service.CertificateValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,6 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
 
-@Slf4j
 @Service
 public class CertificateValidationServiceImpl implements CertificateValidationService {
     static String keystore = "ftn";
@@ -64,17 +64,17 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
         long current = new Date().getTime();
         if(isNew){
             if(validFrom.getTime() >= current-60000 && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime()){
-                log.info("Date for new certificate is valid.");
+                Logger.infoMessage("Date for new certificate is valid.");
                 return true;
             }
-            log.error("Date for new certificate isn't valid.");
+            Logger.infoMessage("Date for new certificate isn't valid.");
             return false;
         }
         if(validFrom.getTime() <= current && validTo.getTime() >= current && validFrom.getTime() < validTo.getTime()){
-            log.info("Date for certificate is valid.");
+            Logger.infoMessage("Date for certificate is valid.");
             return true;
         }
-        log.error("Date for certificate isn't valid.");
+        Logger.infoMessage("Date for certificate isn't valid.");
         return false;
     }
 
