@@ -48,7 +48,7 @@ public class CertificateServiceImpl implements CertificateService {
     public ResponseEntity addCertificate(RequestCertificateDto requestCertificateDto) {
         // end-entity can't sign certificate
         if(certificateRepository.findCertificateBySerialNumber(requestCertificateDto.getCertificateDto().getIssuerSerial()).getCertificateType() == CertificateType.END_ENTITY){
-            log.warn("End-entity certificate can't sign certificate.");
+            log.error("End-entity certificate can't sign certificate.");
             return new ResponseEntity("Issuer have no permission to sign certificate.", HttpStatus.FORBIDDEN);
         }
         // start date if it's today -> add current time
@@ -59,11 +59,13 @@ public class CertificateServiceImpl implements CertificateService {
 
         // check input format
         if(!checkName(requestCertificateDto)){
+            log.error("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName());
             return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
         }
 
         // check date, if it's revoked and check certificate chain
         if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
+            log.error("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.");
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
         }
 
@@ -72,10 +74,10 @@ public class CertificateServiceImpl implements CertificateService {
 
         File f = new File(keyStore);
         if(f.exists() && !f.isDirectory()) {
-            log.info("Load keystore.");
+            log.info("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(keyStore, requestCertificateDto.getKeystorePassword().toCharArray());
         }else{
-            log.info("Create and load keystore.");
+            log.info("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
@@ -126,18 +128,24 @@ public class CertificateServiceImpl implements CertificateService {
         }
 
         if(!checkName(requestCertificateDto)){
+            log.error("Input isn't in valid format for certificate with common name " + requestCertificateDto.getIssuedToCommonName());
             return new ResponseEntity("Input isn't in valid format.", HttpStatus.BAD_REQUEST);
         }
 
-        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto))
+        if(!certificateValidationService.isNewCertificateValid(requestCertificateDto)){
+            log.error("Certificate with common name " + requestCertificateDto.getIssuedToCommonName() + " didn't created because date isn't valid.");
             return new ResponseEntity("Certificate didn't created because date isn't valid.", HttpStatus.BAD_REQUEST);
+        }
+
 
         KeyStoreWriter keyStoreWriter = new KeyStoreWriter();
         File f = new File(rootKSPath);
 
         if(f.exists() && !f.isDirectory()) {
+            log.info("Load keystore for " + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(rootKSPath, requestCertificateDto.getKeystorePassword().toCharArray());
         } else {
+            log.info("Create and load keystor for ." + requestCertificateDto.getCertificateDto().getCertificateType());
             keyStoreWriter.loadKeyStore(null, requestCertificateDto.getKeystorePassword().toCharArray());
         }
 
@@ -177,13 +185,23 @@ public class CertificateServiceImpl implements CertificateService {
                 patternFullName.matcher(requestCertificateDto.getSurname()).matches() &&
                 patternFullName.matcher(requestCertificateDto.getGivenName()).matches() &&
                 patternFullName.matcher(requestCertificateDto.getOrganisation()).matches() &&
-                patternFullName.matcher(requestCertificateDto.getCountry()).matches()){
-            log.info("Input isn't valid format.");
+                patternFullName.matcher(requestCertificateDto.getCountry()).matches() && checkEmail(requestCertificateDto.getEmail())){
             return true;
         }
         log.error("Input isn't in valid format.");
         return false;
     }
+
+    private boolean checkEmail(String email) {
+        Pattern patternEmail = Pattern.compile("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$");
+        if(patternEmail.matcher(email).matches()){
+            return true;
+        }
+        log.error("Email isn't in valid format.");
+        return false;
+    }
+
+
 
     @Override
     public Certificate findCertificateById(Long id) {

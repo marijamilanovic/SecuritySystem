@@ -60,7 +60,7 @@
             <!-- Email -->
             <div>
                 <input type="email" placeholder="Email" [(ngModel)]="requestCertificate.email" name="email" id="email" style="width: 300px" required
-                #email="ngModel" [class.is-invalid] = "email.invalid && email.touched" pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$">
+                #email="ngModel" [class.is-invalid] = "email.invalid && email.touched" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
                 <div *ngIf="email.errors && (email.invalid && email.touched)">
                     <small class="text-danger" *ngIf="email.errors.required">Email is required field.</small>
                     <small class="text-danger" *ngIf="email.errors.pattern">Enter valid email.</small>
@@ -106,7 +106,9 @@
             <br>
             <hr style="border-color:yellow; border-width: 2px;">
             <br>
-            <input type="text" placeholder="Key usage" [(ngModel)]="requestCertificate.certificateDto.keyUsage" name="usage" id="usage" style="width: 300px">
+            <!-- Password -->
+                <input type="password" placeholder="Key usage" [(ngModel)]="requestCertificate.certificateDto.keyUsage" name="usage" id="usage" style="width: 300px" required>
+           
 
             <br><br>
             <button [disabled]="addCertForm.form.invalid" class="btn btn-warning" style="width: 200px" (click) = "addNewCertificate()">Save</button>

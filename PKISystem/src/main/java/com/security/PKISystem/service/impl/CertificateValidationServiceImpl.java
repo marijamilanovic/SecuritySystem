@@ -14,15 +14,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 public class CertificateValidationServiceImpl implements CertificateValidationService {
+    static String keystore = "ftn";
+
     @Value("${rootKSPath}")
     private String rootKSPath;
     @Value("${intermediateKSPath}")
@@ -100,7 +104,7 @@ public class CertificateValidationServiceImpl implements CertificateValidationSe
     public boolean checker(Certificate certificate){
         KeyStoreReader keyStoreReader = new KeyStoreReader();
         String certificateKeyStore = getCertificateKeyStore(certificate.getCertificateType());
-        java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(certificateKeyStore, "ftn", certificate.getSerialNumber().toString());
+        java.security.cert.Certificate certificateToCheck = keyStoreReader.readCertificate(certificateKeyStore, keystore, certificate.getSerialNumber().toString());
         try {
             certificateToCheck.verify(loadPublicKey(certificate.getPublicKey()));
         } catch (SignatureException e) {
