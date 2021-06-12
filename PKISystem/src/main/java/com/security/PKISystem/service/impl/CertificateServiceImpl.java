@@ -178,7 +178,7 @@ public class CertificateServiceImpl implements CertificateService {
                 patternFullName.matcher(requestCertificateDto.getGivenName()).matches() &&
                 patternFullName.matcher(requestCertificateDto.getOrganisation()).matches() &&
                 patternFullName.matcher(requestCertificateDto.getCountry()).matches()){
-            log.info("Input is in valid format.");
+            log.info("Input isn't valid format.");
             return true;
         }
         log.error("Input isn't in valid format.");

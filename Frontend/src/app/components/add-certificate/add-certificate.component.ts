@@ -42,6 +42,8 @@ export class AddCertificateComponent implements OnInit {
   issuerMod: any = {owner:'', serialNumber:0};
   today: {year: number, month: number, day: number};
   now: any;
+
+  reg = new RegExp('^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$')
   
   constructor(calendar: NgbCalendar, private certificateService: CertificateService, private toastrService: ToastrService,
               private router: Router, private datePipe: DatePipe) {
@@ -148,6 +150,12 @@ export class AddCertificateComponent implements OnInit {
         this.requestCertificate.email == '' || this.requestCertificate.certificateDto.certificateType == '' ||
         this.requestCertificate.certificateDto.keyUsage == ''){
       this.toastrService.info('Please fill in all fields.');
+      return false;
+    }
+    if(!this.requestCertificate.issuedToCommonName.match(this.reg) || !this.requestCertificate.surname.match(this.reg) ||
+      !this.requestCertificate.givenName.match(this.reg) || !this.requestCertificate.organisation.match(this.reg) ||
+      !this.requestCertificate.organisationalUnit.match(this.reg) || !this.requestCertificate.country.match(this.reg)){
+      this.toastrService.info('Every field must have minimum 4 character and no numbers');
       return false;
     }
     return true;
