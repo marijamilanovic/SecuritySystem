@@ -6,6 +6,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import {AllCertificatesComponent} from './components/all-certificates/all-certificates.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { AllRequestsComponent } from './components/all-requests/all-requests.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'addCertificate', component: AddCertificateComponent },
   { path: 'validationCertificate', component: ValidationCertificateComponent },
   { path: 'nav', component: NavbarComponent },
-  { path: 'allCertificates', component: AllCertificatesComponent}
+  { path: 'allCertificates', component: AllCertificatesComponent },
+  { path: 'requests', component: AllRequestsComponent }
 ];
 
 @NgModule({

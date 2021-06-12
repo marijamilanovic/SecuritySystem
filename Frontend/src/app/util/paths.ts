@@ -14,3 +14,6 @@ export const PDF_PATH = BACKEND_PATH + '/download';
 export const USER_PATH = BACKEND_PATH + '/user';
 export const LOGIN_PATH = USER_PATH + '/login';
 export const REGISTER_PATH = USER_PATH + '/register';
+
+export const CERT_REQUEST_PATH = BACKEND_PATH + '/request';
+export const USERS_REQUESTS = CERT_REQUEST_PATH + '/user';

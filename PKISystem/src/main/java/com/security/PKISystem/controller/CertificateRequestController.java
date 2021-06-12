@@ -6,6 +6,7 @@ import com.security.PKISystem.domain.mapper.CertificateRequestMapper;
 import com.security.PKISystem.service.CertificateRequestService;
 import com.security.PKISystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +20,19 @@ public class CertificateRequestController {
     @Autowired
     private UserService userService;
 
+//    @PreAuthorize("hasAuthority('ALL_REQUESTS')")
     @GetMapping
     private List<CertificateRequestDto> getAllRequests(){
         return CertificateRequestMapper.mapRequestsToRequestDtos(requestService.findAll());
     }
 
+//    @PreAuthorize("hasAuthority('USER_REQUESTS')")
     @GetMapping("/user/{username}")
     private List<CertificateRequestDto> getUserRequests(@PathVariable String username){
         return CertificateRequestMapper.mapRequestsToRequestDtos(requestService.findRequestsByUserUsername(username));
     }
 
+//    @PreAuthorize("hasAuthority('GET_REQUEST')")
     @GetMapping("/{id}")
     private CertificateRequestDto getRequestById(@PathVariable Long id){
         return CertificateRequestMapper.mapRequestToRequestDto(requestService.findRequestById(id));

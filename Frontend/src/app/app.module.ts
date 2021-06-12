@@ -18,6 +18,8 @@ import { ValidationCertificateComponent } from './components/validation-certific
 import { AllCertificatesComponent } from './components/all-certificates/all-certificates.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { RequestCertificateComponent } from './components/request-certificate/request-certificate.component';
+import { AllRequestsComponent } from './components/all-requests/all-requests.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { RegistrationComponent } from './components/registration/registration.co
     AllCertificatesComponent,
     LoginComponent,
     RegistrationComponent,
+    RequestCertificateComponent,
+    AllRequestsComponent,
   ],
   imports: [
     BrowserModule,
